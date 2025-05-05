@@ -2,7 +2,7 @@ import type { AppConfigInput } from 'nuxt/schema'
 
 export default defineAppConfig({
   awesome: {
-    name: 'Nuxt 3 Awesome Starter',
+    name: 'shopping mall',
     description:
       'a starter template for Nuxt 3 with minimalist themes design, built in components, drawer & menus, and more.',
     project: {
@@ -29,6 +29,7 @@ export default defineAppConfig({
               ],
             },
             { type: 'button', title: 'Setting', to: { name: 'setting' } },
+            { type: 'button', title: '로그인', to: { name: 'login' } },
             // dynamic title
             // {
             //   type: 'button',
