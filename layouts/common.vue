@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-x-hidden">
-    <LayoutPageEmptyNavbar class="h-[64px] max-h-[64px]" />
+    <LayoutPageCommonNavbar class="h-[64px] max-h-[64px]" />
     <LayoutPageContent>
       <slot />
     </LayoutPageContent>

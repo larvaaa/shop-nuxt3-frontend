@@ -13,7 +13,7 @@ interface LoginResponse {
   tokenType: string
 }
 
-const accessToken = ref('')
+let accessToken: string = ''
 
 async function login() {
   if (!loginForm.value.loginId) {
@@ -23,18 +23,16 @@ async function login() {
     alert('비밀번호를 입력하세요')
     return
   }
-  const { data, error } = await useFetch<LoginResponse>(
-    'http://localhost:8080/login',
-    {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: loginForm,
-      credentials: 'include',
+  const { data, error } = await useFetch<LoginResponse>('/login', {
+    baseURL: 'http://localhost:8080',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  )
-  accessToken.value = data.value!.accessToken
+    body: loginForm,
+    credentials: 'include',
+  })
+  accessToken = data.value!.accessToken
 }
 </script>
 

@@ -10,9 +10,40 @@ const signUpForm = ref({
   name: '',
 })
 
-interface LoginResponse {
-  accessToken: string
-  tokenType: string
+const isLoading = ref(false)
+
+async function checkDuplicate(): Promise<boolean> {
+  let checkResult: string | null = null
+  isLoading.value = true
+
+  if (!signUpForm.value.loginId) {
+    alert('아이디를 입력해주세요')
+    return false
+  }
+
+  try {
+    const { data, error } = await useFetch<string>('/duplicateCheck', {
+      baseURL: 'http://localhost:8080',
+      method: 'get',
+      query: {
+        loginId: signUpForm.value.loginId,
+      },
+    })
+
+    checkResult = data.value
+  } catch (error) {
+    alert('잠시 문제가 발생했습니다.')
+    return false
+  } finally {
+    isLoading.value = false
+  }
+
+  if (checkResult === 'N') {
+    alert('이미 존재하는 아이디 입니다')
+    return false
+  }
+  alert('사용 가능한 아이디 입니다')
+  return true
 }
 
 async function signUp() {
@@ -29,6 +60,8 @@ async function signUp() {
     alert('이름을 입력해주세요')
     return
   }
+
+  if (!(await checkDuplicate())) return false
 
   const { data, error } = await useFetch('http://localhost:8080/signUp', {
     method: 'post',
@@ -50,6 +83,14 @@ async function signUp() {
       v-model="signUpForm.loginId"
       size="md"
       class="w-full md:w-2/3"
+    />
+    <AwesomeButton
+      class="capitalize w-full md:w-auto"
+      text="중복체크"
+      type="secondary"
+      size="md"
+      :disable="isLoading"
+      @click.prevent="checkDuplicate"
     /><br />
     <label for="password">비밀번호</label>
     <AwesomeFormTextInput
