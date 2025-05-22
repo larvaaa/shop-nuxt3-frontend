@@ -3,17 +3,16 @@ definePageMeta({
   layout: 'common',
 })
 
-const loginForm = ref({
+const userStore = useUserStore()
+
+const loginForm: Ref<{ loginId: string; loginPw: string }> = ref({
   loginId: '',
   loginPw: '',
 })
 
 interface LoginResponse {
-  accessToken: string
-  tokenType: string
+  memberName: string
 }
-
-let accessToken: string = ''
 
 async function login() {
   if (!loginForm.value.loginId) {
@@ -23,16 +22,18 @@ async function login() {
     alert('비밀번호를 입력하세요')
     return
   }
-  const { data, error } = await useFetch<LoginResponse>('/login', {
-    baseURL: 'http://localhost:8080',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: loginForm,
-    credentials: 'include',
-  })
-  accessToken = data.value!.accessToken
+
+  try {
+    const isLogin = await userStore.login(loginForm.value)
+
+    if (!isLogin) {
+      alert('아이디, 비밀번호를 다시 확인해주세요')
+    } else {
+      navigateTo('/')
+    }
+  } catch (error) {
+    alert('로그인이 실패했습니다')
+  }
 }
 </script>
 
@@ -67,7 +68,7 @@ async function login() {
       text="회원가입"
       type="secondary"
       size="md"
-      to="/login/signUp"
+      to="/user/signUp"
     />
   </div>
 </template>

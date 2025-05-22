@@ -10,6 +10,9 @@ const menus = computed(
       []) as AwesomeLayoutPageNavbarMenu[],
 )
 
+const userStore = useUserStore()
+const isLogin: boolean = userStore.authState.isLogin
+
 // drawer
 const showDrawer = ref(false)
 </script>
@@ -44,6 +47,24 @@ const showDrawer = ref(false)
           <!-- dynamic menus -->
           <template v-for="(item, i) in menus" :key="i">
             <LayoutPageNavbarMenuWrapper :menu="item" />
+          </template>
+          <template v-if="isLogin">
+            <LayoutPageNavbarMenuWrapper
+              :menu="{
+                type: 'button',
+                title: '마이페이지',
+                to: { name: 'user-myPage' },
+              }"
+            />
+          </template>
+          <template v-else>
+            <LayoutPageNavbarMenuWrapper
+              :menu="{
+                type: 'button',
+                title: '로그인',
+                to: { name: 'user-login' },
+              }"
+            />
           </template>
         </div>
         <!-- others -->

@@ -29,7 +29,7 @@ export default defineAppConfig({
               ],
             },
             { type: 'button', title: 'Setting', to: { name: 'setting' } },
-            { type: 'button', title: '로그인', to: { name: 'login' } },
+            // { type: 'button', title: '로그인', to: { name: 'login' } },
             // dynamic title
             // {
             //   type: 'button',
