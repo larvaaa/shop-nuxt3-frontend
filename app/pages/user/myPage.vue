@@ -1,124 +1,55 @@
 <script lang="ts" setup>
 definePageMeta({
-  layout: 'common',
+  layout: 'page',
 })
 
-const signUpForm = ref({
-  loginId: '',
-  loginPw: '',
-  mobileNumber: '',
-  name: '',
-})
+const userStore = useUserStore()
 
-const isLoading = ref(false)
-
-async function checkDuplicate(): Promise<boolean> {
-  let checkResult: string | null = null
-  isLoading.value = true
-
-  if (!signUpForm.value.loginId) {
-    alert('아이디를 입력해주세요')
-    return false
-  }
-
-  try {
-    const { data, error } = await useFetch<string>('/duplicateCheck', {
-      baseURL: 'http://localhost:8080',
-      method: 'get',
-      query: {
-        loginId: signUpForm.value.loginId,
-      },
-    })
-
-    checkResult = data.value
-  } catch (error) {
-    alert('잠시 문제가 발생했습니다.')
-    return false
-  } finally {
-    isLoading.value = false
-  }
-
-  if (checkResult === 'N') {
-    alert('이미 존재하는 아이디 입니다')
-    return false
-  }
-  alert('사용 가능한 아이디 입니다')
-  return true
+interface UserInfoIF {
+  name: string
+  mobileNumber: string
 }
 
-async function signUp() {
-  if (!signUpForm.value.loginId) {
-    alert('아이디를 입력해주세요')
-    return
-  } else if (!signUpForm.value.loginPw) {
-    alert('비밀번호를 입력해주세요')
-    return
-  } else if (!signUpForm.value.mobileNumber) {
-    alert('전화번호를 입력해주세요')
-    return
-  } else if (!signUpForm.value.name) {
-    alert('이름을 입력해주세요')
-    return
-  }
+const userInfo: Ref<UserInfoIF> = ref({
+  name: '',
+  mobileNumber: '',
+})
 
-  if (!(await checkDuplicate())) return false
+async function getUserInfo() {
+  const id: number = userStore.authState.memberId!
 
-  const { data, error } = await useFetch('http://localhost:8080/signUp', {
-    method: 'post',
-    body: signUpForm,
+  const { data, error } = await useFetch<UserInfoIF>(`/users/${id}`, {
+    baseURL: 'http://localhost:8080',
+    method: 'get',
+    headers: {
+      authorization: `Bearer ${userStore.authState.accessToken}`,
+    },
   })
 
-  signUpForm.value.loginId = ''
-  signUpForm.value.loginPw = ''
-  signUpForm.value.mobileNumber = ''
-  signUpForm.value.name = ''
+  userInfo.value.name = data.value?.name ?? ''
+  userInfo.value.mobileNumber = data.value?.mobileNumber ?? ''
 }
+
+onMounted(() => {
+  getUserInfo()
+})
 </script>
 
 <template>
   <div class="flex-1 flex flex-col items-center justify-center">
-    <label for="id">아이디</label>
-    <AwesomeFormTextInput
-      id="id"
-      v-model="signUpForm.loginId"
-      size="md"
-      class="w-full md:w-2/3"
-    />
-    <AwesomeButton
-      class="capitalize w-full md:w-auto"
-      text="중복체크"
-      type="secondary"
-      size="md"
-      :disable="isLoading"
-      @click.prevent="checkDuplicate"
-    /><br />
-    <label for="password">비밀번호</label>
-    <AwesomeFormTextInput
-      id="password"
-      v-model="signUpForm.loginPw"
-      size="md"
-      class="w-full md:w-2/3"
-    /><br />
     <label for="password">이름</label>
     <AwesomeFormTextInput
       id="password"
-      v-model="signUpForm.name"
+      v-model="userInfo.name"
       size="md"
       class="w-full md:w-2/3"
     /><br />
     <label for="password">전화번호</label>
     <AwesomeFormTextInput
       id="password"
-      v-model="signUpForm.mobileNumber"
+      v-model="userInfo.mobileNumber"
       size="md"
       class="w-full md:w-2/3"
-    /><br />
-    <AwesomeButton
-      class="capitalize w-full md:w-auto"
-      text="가입하기"
-      type="secondary"
-      size="md"
-      @click.prevent="signUp"
     /><br />
   </div>
 

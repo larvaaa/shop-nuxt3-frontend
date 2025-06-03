@@ -11,7 +11,7 @@ const menus = computed(
 )
 
 const userStore = useUserStore()
-const isLogin: boolean = userStore.authState.isLogin
+console.log('navbar isLogin ', userStore.authState.isLogin)
 
 // drawer
 const showDrawer = ref(false)
@@ -48,7 +48,7 @@ const showDrawer = ref(false)
           <template v-for="(item, i) in menus" :key="i">
             <LayoutPageNavbarMenuWrapper :menu="item" />
           </template>
-          <template v-if="isLogin">
+          <template v-if="userStore.authState.isLogin">
             <LayoutPageNavbarMenuWrapper
               :menu="{
                 type: 'button',

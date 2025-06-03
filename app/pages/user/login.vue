@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-  layout: 'common',
+  layout: 'page',
 })
 
 const userStore = useUserStore()
@@ -9,10 +9,6 @@ const loginForm: Ref<{ loginId: string; loginPw: string }> = ref({
   loginId: '',
   loginPw: '',
 })
-
-interface LoginResponse {
-  memberName: string
-}
 
 async function login() {
   if (!loginForm.value.loginId) {
@@ -23,16 +19,12 @@ async function login() {
     return
   }
 
-  try {
-    const isLogin = await userStore.login(loginForm.value)
+  const isLogin: boolean = await userStore.login(loginForm.value)
 
-    if (!isLogin) {
-      alert('아이디, 비밀번호를 다시 확인해주세요')
-    } else {
-      navigateTo('/')
-    }
-  } catch (error) {
-    alert('로그인이 실패했습니다')
+  if (!isLogin) {
+    alert('아이디, 비밀번호를 다시 확인해주세요')
+  } else {
+    navigateTo('/')
   }
 }
 </script>

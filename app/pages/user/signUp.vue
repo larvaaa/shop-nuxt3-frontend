@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-  layout: 'common',
+  layout: 'page',
 })
 
 const signUpForm = ref({
@@ -63,7 +63,8 @@ async function signUp() {
 
   if (!(await checkDuplicate())) return false
 
-  const { data, error } = await useFetch('http://localhost:8080/signUp', {
+  const { data, error } = await useFetch('/users', {
+    baseURL: 'http://localhost:8080',
     method: 'post',
     body: signUpForm,
   })
