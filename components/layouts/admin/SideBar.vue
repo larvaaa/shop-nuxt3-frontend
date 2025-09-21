@@ -91,4 +91,10 @@ function toggle(menu: MenuItem) {
     emits('openTab', menu)
   }
 }
+
+onMounted(() => {
+  props.menus.forEach((menu) => {
+    if (menu.menuLevel === 1) opens.value.push(menu.menuId)
+  })
+})
 </script>
