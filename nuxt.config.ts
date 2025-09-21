@@ -48,6 +48,10 @@ export default defineNuxtConfig({
 
   components: [
     {
+      path: resolve('./components'),
+      global: false,
+    },
+    {
       prefix: 'Layout',
       path: resolve('./components/layouts'),
       global: true,

@@ -41,16 +41,21 @@ export const useUserStore = defineStore('user', () => {
     return authState.value.isLogin
   }
 
-  const refresh = async (accessToken: string | null = null) => {
-    const { data } = await useFetch<LoginResponse>('/login', {
-      baseURL: 'http://localhost:8080',
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json',
-        cookie: `accessToken=${accessToken}`,
+  const refresh = async (accessToken: string = '') => {
+    const { data, error } = await useFetch<LoginResponse>(
+      '/login',
+      {
+        baseURL: 'http://localhost:8080',
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          cookie: `accessToken=${accessToken}`,
+        },
+        credentials: 'include',
       },
-      credentials: 'include',
-    })
+
+      // refreshToken 쿠키는 안 보낼수 있으면 보내지 않는다.
+    )
 
     authState.value.memberId = data.value?.memberId ?? null
     authState.value.memberName = data.value?.memberName ?? ''

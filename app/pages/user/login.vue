@@ -42,6 +42,7 @@ async function login() {
     <label for="loginPw">비밀번호</label>
     <AwesomeFormTextInput
       id="loginPw"
+      @keyup.enter="login"
       v-model="loginForm.loginPw"
       size="md"
       class="w-full md:w-2/3"

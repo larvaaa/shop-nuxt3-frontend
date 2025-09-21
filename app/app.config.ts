@@ -14,21 +14,47 @@ export default defineAppConfig({
       page: {
         navbar: {
           menus: [
+            {
+              type: 'link',
+              title: 'admin',
+              to: { name: 'admin' },
+            },
             { type: 'link', title: 'Blank', to: { name: 'blank' } },
-            { type: 'link', title: 'Post', to: { name: 'post' } },
-            { type: 'link', title: 'Test', to: { name: 'test' } },
             {
               type: 'dropdown',
-              title: 'Documentations',
+              title: 'publish',
               children: [
                 {
                   type: 'link',
-                  title: 'Components',
-                  to: { name: 'docs-components' },
+                  title: 'publish1',
+                  to: { name: 'publish-publish1' },
+                },
+                {
+                  type: 'link',
+                  title: 'publish2',
+                  to: { name: 'publish-publish2' },
+                },
+                {
+                  type: 'link',
+                  title: 'publish3',
+                  to: { name: 'publish-publish3' },
                 },
               ],
             },
-            { type: 'button', title: 'Setting', to: { name: 'setting' } },
+            // { type: 'link', title: 'Post', to: { name: 'post' } },
+            // { type: 'link', title: 'Test', to: { name: 'test' } },
+            // {
+            //   type: 'dropdown',
+            //   title: 'Documentations',
+            //   children: [
+            //     {
+            //       type: 'link',
+            //       title: 'Components',
+            //       to: { name: 'docs-components' },
+            //     },
+            //   ],
+            // },
+            // { type: 'button', title: 'Setting', to: { name: 'setting' } },
             // { type: 'button', title: '로그인', to: { name: 'login' } },
             // dynamic title
             // {
