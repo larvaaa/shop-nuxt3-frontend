@@ -1,13 +1,13 @@
 <template>
   <aside
-    class="w-[10vw] bg-white rounded-r shadow min-h-screen py-6 flex-shrink-0"
+    class="w-[165px] bg-white rounded-r shadow min-h-screen py-6 flex-shrink-0"
   >
     <nav>
       <ul class="space-y-2 relative">
         <template v-for="menu in menus" :key="menu.menuId">
-          <li v-if="menu.menuLevel == 1 || opens.includes(menu.parentId!)">
+          <li v-if="opens.includes(menu.menuId)">
             <button
-              class="w-full text-left py-2 rounded hover:bg-blue-100 text-gray-700 font-bold flex items-center relative"
+              class="w-full text-left py-2 rounded hover:bg-slate-200 text-gray-700 font-bold flex items-center relative"
               :class="menuFontWeight[menu.menuLevel]"
               :style="{
                 paddingLeft: `${(menu.menuLevel - 1) * 18 + 16}px`,
@@ -20,7 +20,11 @@
               <span
                 v-if="hasChildren(menu.menuId, menu.menuLevel + 1)"
                 class="ml-2"
-                :class="{ 'rotate-90 duration-300': isExtend(menu.menuId) }"
+                :class="
+                  isExtend(menu.menuId)
+                    ? 'rotate-90 duration-200'
+                    : 'rotate-0 duration-200'
+                "
                 >{{ '>' }}</span
               >
             </button>
@@ -65,17 +69,27 @@ function hasChildren(menuId: string | number, level: number) {
 
 // 하위 메뉴를 열고 닫음
 function toggle(menu: MenuItem) {
-  if (!opens.value.includes(menu.menuId)) {
-    // extend
+  const targetId = menu.menuId
+
+  if (!isExtend(targetId)) {
+    // 확대
+    const openId = targetId
+
+    props.menus.forEach((menu) => {
+      if (menu.parentId === openId) opens.value.push(menu.menuId)
+    })
+
     opens.value.push(menu.menuId)
   } else {
-    // collapse
-    let removeId = menu.menuId
+    // 축소
+    let removeId = targetId
     const removeList = [...removeId]
 
     while (removeList.length) {
       removeId = removeList.pop()!
-      opens.value = opens.value.filter((item) => item !== removeId)
+      if (removeId !== targetId) {
+        opens.value = opens.value.filter((item) => item !== removeId)
+      }
 
       const children = props.menus.filter((item) => item.parentId === removeId)
       children.forEach((item) => {

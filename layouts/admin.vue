@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex flex-col">
+    <NuxtPage />
     <header class="bg-blue-800 text-white py-4 shadow">
       <div class="container mx-auto px-4 flex items-center justify-between">
         <h1 class="text-xl font-bold">관리자 페이지</h1>
@@ -8,8 +9,7 @@
     <div class="flex flex-1">
       <LayoutAdminSideBar :menus="menus" @open-tab="openTab" />
       <main
-        class="flex-1 flex items-center justify-center w-full h-full overflow-auto"
-        style="margin-top: 30px"
+        class="flex-1 flex items-center justify-center w-full h-full overflow-auto mt-[30px]"
       >
         <div
           v-if="tabs.length"
