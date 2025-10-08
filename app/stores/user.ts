@@ -1,3 +1,5 @@
+import { defineStore } from 'pinia'
+
 interface LoginResponse {
   accessToken: string
   memberId: number | null

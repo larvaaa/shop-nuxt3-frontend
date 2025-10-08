@@ -1,11 +1,11 @@
 export interface MenuItem {
   menuId: string
   menuName: string
-  menuLevel: number | undefined
+  level: number | undefined
   parentId?: string
   route?: Component
   screenId?: string
   screenName?: string
-  order?: number | undefined
+  sort?: number | undefined
   useYn?: string
 }

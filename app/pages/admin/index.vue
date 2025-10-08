@@ -55,14 +55,10 @@
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 
+selectMenus()
+
 definePageMeta({ layout: false })
-const tabs = ref<MenuItem[]>([
-  // {
-  //   menuId: '1',
-  //   menuName: 'tab1',
-  //   menuLevel: 2,
-  // },
-])
+const tabs = ref<MenuItem[]>([])
 
 // 현재 선택된 탭
 const selectedTab = ref(0)
@@ -80,72 +76,25 @@ const changeTab = (index: number) => {
   selectedTab.value = index
 }
 
-const menus = ref<MenuItem[]>([
-  { menuId: '3', menuName: '시스템 관리', menuLevel: 1 },
-  {
-    menuId: '9',
-    menuName: '메뉴 관리',
-    menuLevel: 2,
-    parentId: '3',
-  },
-  {
-    menuId: '11',
-    menuName: '메뉴 등록',
-    menuLevel: 3,
-    parentId: '9',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/system/menu/form.vue'),
-    ),
-  },
-  {
-    menuId: '12',
-    menuName: '메뉴 목록',
-    menuLevel: 3,
-    parentId: '9',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/system/menu/index.vue'),
-    ),
-  },
-  {
-    menuId: '10',
-    menuName: '화면 관리',
-    menuLevel: 2,
-    parentId: '3',
-  },
-  { menuId: '1', menuName: '상품 관리', menuLevel: 1 },
-  {
-    menuId: '4',
-    menuName: '상품 목록',
-    menuLevel: 2,
-    parentId: '1',
-  },
-  {
-    menuId: '6',
-    menuName: '상품 상세 목록',
-    menuLevel: 3,
-    parentId: '4',
-  },
-  {
-    menuId: '5',
-    menuName: '상품 등록',
-    menuLevel: 2,
-    parentId: '1',
-    route: defineAsyncComponent(() => import('~/pages/admin/product/form.vue')),
-  },
-  { menuId: '2', menuName: '회원 관리', menuLevel: 1 },
-  {
-    menuId: '7',
-    menuName: '회원 목록',
-    menuLevel: 2,
-    parentId: '2',
-  },
-  {
-    menuId: '8',
-    menuName: '회원 등급',
-    menuLevel: 2,
-    parentId: '2',
-  },
-])
+const menus = ref<MenuItem[]>([])
+
+async function selectMenus() {
+  // const response = await $fetch<MenuItem[]>('/admin/system/menu', {
+  const response = await useFetch<MenuItem[]>('/admin/system/menu', {
+    baseURL: 'http://localhost:8080',
+    method: 'get',
+    headers: {
+      authorization: `Bearer ${useUserStore().authState.accessToken}`,
+    },
+  })
+
+  menus.value = response.data?.value || []
+  // menus.value = response
+}
+
+onMounted(async () => {
+  // await selectMenus()
+})
 </script>
 
 <style scoped>

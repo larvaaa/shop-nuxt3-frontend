@@ -4,13 +4,13 @@
   >
     <nav>
       <ul class="space-y-2 relative">
-        <template v-for="menu in menus" :key="menu.menuId">
+        <template v-for="menu in props.menus" :key="menu.menuId">
           <li v-if="opens.includes(menu.menuId)">
             <button
               class="w-full text-left py-2 rounded hover:bg-slate-200 text-gray-700 font-bold flex items-center relative"
-              :class="menuFontWeight[menu.menuLevel]"
+              :class="menuFontWeight[menu.level!]"
               :style="{
-                paddingLeft: `${(menu.menuLevel - 1) * 18 + 16}px`,
+                paddingLeft: `${(menu.level! - 1) * 18 + 16}px`,
               }"
               @click="toggle(menu)"
             >
@@ -18,7 +18,7 @@
                 {{ menu.menuName }}
               </span>
               <span
-                v-if="hasChildren(menu.menuId, menu.menuLevel + 1)"
+                v-if="hasChildren(menu.menuId, menu.level! + 1)"
                 class="ml-2"
                 :class="
                   isExtend(menu.menuId)
@@ -64,7 +64,7 @@ const isExtend = (parnedId: string) => {
 
 // 자식 메뉴가 있는지 확인
 function hasChildren(menuId: string | number, level: number) {
-  return props.menus.some((m) => m.menuLevel === level && m.parentId === menuId)
+  return props.menus.some((m) => m.level === level && m.parentId === menuId)
 }
 
 // 하위 메뉴를 열고 닫음
@@ -106,9 +106,13 @@ function toggle(menu: MenuItem) {
   }
 }
 
-onMounted(() => {
-  props.menus.forEach((menu) => {
-    if (menu.menuLevel === 1) opens.value.push(menu.menuId)
-  })
-})
+watch(
+  () => props.menus,
+  () => {
+    props.menus.forEach((menu) => {
+      if (menu.level === 1) opens.value.push(menu.menuId)
+    })
+  },
+  { deep: true },
+)
 </script>

@@ -1,6 +1,4 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  return
-
   const loginUrl = '/user/login'
   const skipPaths: string[] = ['/', loginUrl]
   const userStore = useUserStore()

@@ -1,33 +1,43 @@
 <template>
   <div class="flex h-[80vh] justify-around">
     <div class="flex-1 border-gray-200 border-2 mr-5 p-5">
+      <button class="w-16 text-lg border-2 rounded-lg" @click="addMenu()">
+        추가
+      </button>
       <ul>
         <li
           v-for="(menu, index) in menus"
           :key="menu.menuId"
-          class="py-2"
+          class="py-2 text-lg relative h-[3rem]"
           :class="[
-            paddingClass(menu.menuLevel!),
-            { 'text-lg text-blue font-medium': index === selectedMenu },
+            paddingClass(menu.level!),
+            { 'text-xl text-blue-500 font-medium': index === selectedIndex },
             'hover:text-indigo-400',
           ]"
         >
-          <a href="#" @click.prevent="((form = menu), (selectedMenu = index))">
-            {{ menu.menuName }}
+          <span v-if="!menu.menuId">신규 메뉴</span>
+          <a v-else href="#" @click.prevent="clickMenu(menu, index)">
+            {{ menu.menuName + ' (' + menu.level + ')' }}
           </a>
-          <button class="ml-2 border-2 w-[1.5rem]">+</button>
+          <button
+            v-if="menu.menuId"
+            class="ml-2 border-2 w-[4rem] rounded-lg absolute right-0"
+            @click="addMenu(menu)"
+          >
+            추가
+          </button>
         </li>
       </ul>
     </div>
-    <div class="flex-1 border-gray-200 border-2 p-5">
-      <form>
+    <div class="flex-1 border-gray-200 border-2 p-5 relative">
+      <form v-if="selectedIndex > -1">
         <label class="block mb-4"
           ><span class="inline-block w-[5rem]">메뉴 아이디</span>
           <input
             v-model="form.menuId"
             type="text"
-            class="border border-gray-400 p-1 rounded-lg"
-            disabled
+            class="border border-gray-400 p-1 rounded-lg bg-slate-200"
+            readonly
           />
         </label>
         <label class="block mb-4"
@@ -41,15 +51,16 @@
         <label class="block mb-4"
           ><span class="inline-block w-[5rem]">메뉴레벨</span>
           <input
-            v-model="form.menuLevel"
+            v-model="form.level"
             type="text"
-            class="border border-gray-400 p-1 rounded-lg"
+            class="border border-gray-400 p-1 rounded-lg bg-slate-200"
+            readonly
           />
         </label>
         <label class="block mb-4"
           ><span class="inline-block w-[5rem]">메뉴순서</span>
           <input
-            v-model="form.order"
+            v-model="form.sort"
             type="text"
             class="border border-gray-400 p-1 rounded-lg"
         /></label>
@@ -58,7 +69,7 @@
           <input
             v-model="form.screenId"
             type="text"
-            class="border border-gray-400 p-1 rounded-lg"
+            class="border border-gray-400 p-1 rounded-lg bg-slate-200"
             disabled
         /></label>
         <label class="block mb-4"
@@ -66,7 +77,7 @@
           <input
             v-model="form.screenName"
             type="text"
-            class="border border-gray-400 p-1 rounded-lg"
+            class="border border-gray-400 p-1 rounded-lg bg-slate-200"
             disabled
         /></label>
         <div class="mb-4">
@@ -89,26 +100,28 @@
               class="border border-gray-400 p-1 rounded-lg"
           /></label>
         </div>
-        <div class="flex justify-around mt-20">
-          <button
-            class="w-16 text-lg border-blue-500 border bg-blue-200 rounded-lg"
-            @click.prevent=""
-          >
-            저장
-          </button>
-          <button
-            class="w-16 text-lg border-red-500 border bg-red-400 rounded-lg"
-            @click.prevent=""
-          >
-            삭제
-          </button>
-        </div>
       </form>
+      <div class="flex justify-around mt-3 mb-5 absolute bottom-2 right-8">
+        <button
+          class="w-16 text-lg border-blue-500 border bg-blue-200 rounded-lg mr-3"
+          @click.prevent="saveMenu"
+        >
+          저장
+        </button>
+        <button
+          class="w-16 text-lg border-red-500 border bg-red-400 rounded-lg"
+          @click.prevent="deleteMenu"
+        >
+          삭제
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+selectMenus()
+
 // 메뉴 레벨에 따라서 왼쪽 패딩
 const paddingClass = (level: number) => {
   return {
@@ -118,94 +131,101 @@ const paddingClass = (level: number) => {
   }
 }
 
-// 선택된 메뉴
-const selectedMenu = ref()
+const menus = ref<MenuItem[]>([])
 
-// 메뉴 form
+const selectedIndex = ref<number>(-1)
+
 const form = ref<MenuItem>({
   menuName: '',
   menuId: '',
-  menuLevel: undefined,
+  level: undefined,
   parentId: '',
   screenId: '',
   screenName: '',
-  order: undefined,
+  sort: undefined,
   useYn: 'Y',
 })
 
-const menus = ref<MenuItem[]>([
-  { menuId: '3', menuName: '시스템 관리', menuLevel: 1, useYn: 'Y' },
-  {
-    menuId: '9',
-    menuName: '메뉴 관리',
-    menuLevel: 2,
-    parentId: '3',
+async function saveMenu() {
+  const response = await $fetch('/admin/system/menu', {
+    baseURL: 'http://localhost:8080',
+    method: 'post',
+    body: form.value,
+    headers: {
+      authorization: `Bearer ${useUserStore().authState.accessToken}`,
+    },
+  })
+
+  alert(response)
+  selectMenus()
+}
+
+async function deleteMenu() {
+  const response = await $fetch('/admin/system/menu', {
+    baseURL: 'http://localhost:8080',
+    method: 'delete',
+    body: form.value,
+    headers: {
+      authorization: `Bearer ${useUserStore().authState.accessToken}`,
+    },
+  })
+
+  alert(response)
+  selectMenus()
+}
+
+async function selectMenus() {
+  const response = await $fetch<MenuItem[]>('/admin/system/menu', {
+    baseURL: 'http://localhost:8080',
+    method: 'get',
+    headers: {
+      authorization: `Bearer ${useUserStore().authState.accessToken}`,
+    },
+  })
+
+  menus.value = response
+}
+
+function removeAddedMenu() {
+  const removeIndex = menus.value.findIndex((item) => !item.menuId)
+  if (removeIndex > -1) menus.value.splice(removeIndex, 1)
+}
+
+function addMenu(parentMenu?: MenuItem) {
+  removeAddedMenu()
+
+  const levelOneMenuCount = menus.value.filter(
+    (item) => item.level === 1,
+  ).length
+
+  const childCount = menus.value.filter(
+    (item) => item.parentId === parentMenu?.menuId,
+  ).length
+
+  form.value = {
+    menuName: '',
+    menuId: '',
+    level: (parentMenu?.level || 0) + 1,
+    parentId: parentMenu?.menuId,
+    screenId: '',
+    screenName: '',
+    sort: parentMenu ? childCount + 1 : levelOneMenuCount + 1,
     useYn: 'Y',
-  },
-  {
-    menuId: '11',
-    menuName: '메뉴 등록',
-    menuLevel: 3,
-    parentId: '9',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/system/menu/form.vue'),
-    ),
-    useYn: 'Y',
-  },
-  {
-    menuId: '12',
-    menuName: '메뉴 목록',
-    menuLevel: 3,
-    parentId: '9',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/system/menu/index.vue'),
-    ),
-    useYn: 'Y',
-  },
-  {
-    menuId: '10',
-    menuName: '화면 관리',
-    menuLevel: 2,
-    parentId: '3',
-    useYn: 'Y',
-  },
-  { menuId: '1', menuName: '상품 관리', menuLevel: 1, useYn: 'Y' },
-  {
-    menuId: '4',
-    menuName: '상품 목록',
-    menuLevel: 2,
-    parentId: '1',
-    useYn: 'Y',
-  },
-  {
-    menuId: '6',
-    menuName: '상품 상세 목록',
-    menuLevel: 3,
-    parentId: '4',
-    useYn: 'Y',
-  },
-  {
-    menuId: '5',
-    menuName: '상품 등록',
-    menuLevel: 2,
-    parentId: '1',
-    route: defineAsyncComponent(() => import('~/pages/admin/product/form.vue')),
-    useYn: 'Y',
-  },
-  { menuId: '2', menuName: '회원 관리', menuLevel: 1, useYn: 'Y' },
-  {
-    menuId: '7',
-    menuName: '회원 목록',
-    menuLevel: 2,
-    parentId: '2',
-    useYn: 'Y',
-  },
-  {
-    menuId: '8',
-    menuName: '회원 등급',
-    menuLevel: 2,
-    parentId: '2',
-    useYn: 'Y',
-  },
-])
+  }
+
+  const addIndex =
+    menus.value.findIndex((item) => item.menuId === parentMenu?.menuId) + 1 || 0
+
+  menus.value.splice(addIndex, 0, form.value)
+
+  selectedIndex.value = addIndex
+}
+
+function clickMenu(menu: MenuItem, index: number) {
+  removeAddedMenu()
+  selectedIndex.value = menus.value.findIndex(
+    (item) => item.menuId === menu.menuId,
+  )
+  Object.assign(form.value, menu)
+}
 </script>
