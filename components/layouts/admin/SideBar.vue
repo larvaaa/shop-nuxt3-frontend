@@ -83,7 +83,7 @@ function toggle(menu: MenuItem) {
   } else {
     // 축소
     let removeId = targetId
-    const removeList = [...removeId]
+    const removeList = [removeId]
 
     while (removeList.length) {
       removeId = removeList.pop()!

@@ -19,7 +19,6 @@ export default defineAppConfig({
               title: 'admin',
               to: { name: 'admin' },
             },
-            { type: 'link', title: 'Blank', to: { name: 'blank' } },
             {
               type: 'dropdown',
               title: 'publish',

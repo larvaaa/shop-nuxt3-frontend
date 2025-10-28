@@ -64,14 +64,17 @@
             type="text"
             class="border border-gray-400 p-1 rounded-lg"
         /></label>
-        <label class="block mb-4"
-          ><span class="inline-block w-[5rem]">화면 아이디</span>
+        <label class="mb-4 flex items-center"
+          ><span class="w-[5rem]">화면 아이디</span>
           <input
             v-model="form.screenId"
             type="text"
-            class="border border-gray-400 p-1 rounded-lg bg-slate-200"
+            class="border border-gray-400 p-1 rounded-lg bg-slate-200 mr-3"
             disabled
-        /></label>
+          /><AwesomeButton @click="openPopup" size="sm"
+            >화면 검색</AwesomeButton
+          ></label
+        >
         <label class="block mb-4"
           ><span class="inline-block w-[5rem]">화면명</span>
           <input
@@ -116,10 +119,19 @@
         </button>
       </div>
     </div>
+    <LayerPopup v-model="isOpen">
+      <template #title> 화면목록 </template>
+      <template #default>
+        <ScreenList :is-popup="true" @set-screen="setScreen"></ScreenList>
+      </template>
+    </LayerPopup>
   </div>
 </template>
 
 <script lang="ts" setup>
+import ScreenList from '~/pages/admin/system/screen/index.vue'
+import type { Screen } from '~~/utils/admin-menu-type'
+
 selectMenus()
 
 // 메뉴 레벨에 따라서 왼쪽 패딩
@@ -130,6 +142,8 @@ const paddingClass = (level: number) => {
     'pl-[calc(1rem_*_3)]': level === 3,
   }
 }
+
+const isOpen = ref(false)
 
 const menus = ref<MenuItem[]>([])
 
@@ -227,5 +241,20 @@ function clickMenu(menu: MenuItem, index: number) {
     (item) => item.menuId === menu.menuId,
   )
   Object.assign(form.value, menu)
+}
+
+function openPopup() {
+  isOpen.value = true
+}
+
+function closePopup() {
+  isOpen.value = false
+}
+
+function setScreen(item: Screen) {
+  closePopup()
+
+  form.value.screenId = item.id
+  form.value.screenName = item.name
 }
 </script>

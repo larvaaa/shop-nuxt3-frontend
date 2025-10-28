@@ -1,22 +1,51 @@
+<template>
+  <div :class="`text-input-container relative flex`">
+    <div
+      v-if="slots['prefix-disabled']"
+      :class="`duration-300 transition-colors flex rounded-l bg-gray-100 dark:bg-gray-800 text-gray-500 border ${selectedBorderStyle}`"
+    >
+      <slot name="prefix-disabled" />
+    </div>
+    <div
+      v-if="slots.prefix"
+      :class="`flex rounded-l border ${selectedBorderStyle}`"
+    >
+      <slot name="prefix" />
+    </div>
+    <div class="text-input-wrapper relative flex flex-1">
+      <input
+        v-model="modelValue"
+        :class="`duration-300 transition-colors text-input w-full flex-1 bg-transparent outline-none border ${
+          havePreEl ? '' : 'rounded-l'
+        } ${
+          haveSuEl ? '' : 'rounded-r'
+        } ${selectedBorderStyle} ${selectedOnHoverBorderStyle} ${selectedPaddingStyle} ${selectedFontSizeStyle}`"
+        :type="type"
+        :placeholder="placeholder"
+        :disabled="disabled"
+      />
+    </div>
+    <div
+      v-if="slots.suffix"
+      :class="`flex rounded-r border ${selectedBorderStyle}`"
+    >
+      <slot name="suffix" />
+    </div>
+  </div>
+</template>
+
 <script lang="ts" setup>
-// compiler macro
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
-  },
-  placeholder: {
-    type: String,
-    default: '',
-  },
-  size: {
-    type: String,
-    default: 'md',
-  },
-  type: {
-    type: String,
-    default: 'default',
-  },
+interface Props {
+  modelValue: string
+  placeholder?: string
+  size: string
+  type?: string
+  disabled?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: 'md',
+  type: 'default',
 })
 const emit = defineEmits(['update:modelValue'])
 const slots = useSlots()
@@ -58,38 +87,3 @@ const selectedFontSizeStyle = computed(
   () => fontSizeStyles[props.size] || fontSizeStyles.md,
 )
 </script>
-
-<template>
-  <div :class="`text-input-container relative flex`">
-    <div
-      v-if="slots['prefix-disabled']"
-      :class="`duration-300 transition-colors flex rounded-l bg-gray-100 dark:bg-gray-800 text-gray-500 border ${selectedBorderStyle}`"
-    >
-      <slot name="prefix-disabled" />
-    </div>
-    <div
-      v-if="slots.prefix"
-      :class="`flex rounded-l border ${selectedBorderStyle}`"
-    >
-      <slot name="prefix" />
-    </div>
-    <div class="text-input-wrapper relative flex flex-1">
-      <input
-        v-model="modelValue"
-        :class="`duration-300 transition-colors text-input w-full flex-1 bg-transparent outline-none border ${
-          havePreEl ? '' : 'rounded-l'
-        } ${
-          haveSuEl ? '' : 'rounded-r'
-        } ${selectedBorderStyle} ${selectedOnHoverBorderStyle} ${selectedPaddingStyle} ${selectedFontSizeStyle}`"
-        :type="type"
-        :placeholder="placeholder"
-      />
-    </div>
-    <div
-      v-if="slots.suffix"
-      :class="`flex rounded-r border ${selectedBorderStyle}`"
-    >
-      <slot name="suffix" />
-    </div>
-  </div>
-</template>

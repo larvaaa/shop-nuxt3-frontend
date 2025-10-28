@@ -16,14 +16,19 @@ export const useUserStore = defineStore('user', () => {
   })
 
   const login = async (loginForm: { loginId: string; loginPw: string }) => {
+    const form = {
+      loginId: loginForm.loginId.trim(),
+      loginPw: loginForm.loginPw.trim(),
+    }
+
     try {
-      const { data, error } = await useFetch<LoginResponse>('/login', {
+      const response = await $fetch<LoginResponse>('/login', {
         baseURL: 'http://localhost:8080',
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: loginForm,
+        body: form,
         credentials: 'include',
       })
 
@@ -32,10 +37,10 @@ export const useUserStore = defineStore('user', () => {
         throw new Error('error in setup')
       }
 
-      authState.value.memberId = data.value?.memberId ?? null
-      authState.value.memberName = data.value?.memberName ?? ''
-      authState.value.isLogin = data.value?.isLogin ?? false
-      authState.value.accessToken = data.value?.accessToken ?? ''
+      authState.value.memberId = response?.memberId ?? null
+      authState.value.memberName = response?.memberName ?? ''
+      authState.value.isLogin = response?.isLogin ?? false
+      authState.value.accessToken = response?.accessToken ?? ''
     } catch {
       alert('문제가 발생해서 복구중입니다.')
     }

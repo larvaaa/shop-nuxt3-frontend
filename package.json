@@ -29,7 +29,7 @@
   ],
   "scripts": {
     "build": "nuxt build ./app",
-    "dev": "nuxt dev ./app --no-clear",
+    "dev": "nuxt dev ./app --no-clear --dotenv .env.loc",
     "generate": "nuxt generate ./app",
     "preview": "nuxt preview ./app",
     "postinstall": "nuxt prepare ./app",

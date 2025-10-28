@@ -37,12 +37,18 @@
               <TabPanel
                 v-for="tab in tabs"
                 :key="tab.menuId"
+                :unmount="false"
                 :class="[
                   'bg-white p-3',
                   'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none',
                 ]"
               >
-                <component :is="tab.route" />
+                <component
+                  :is="tab.route"
+                  :is-popup="false"
+                  :params="tab.params"
+                  @open-screen="openTab"
+                />
               </TabPanel>
             </TabPanels>
           </TabGroup>
@@ -54,8 +60,9 @@
 
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import type { Screen } from '~~/utils/admin-menu-type'
 
-selectMenus()
+// selectMenus()
 
 definePageMeta({ layout: false })
 const tabs = ref<MenuItem[]>([])
@@ -64,8 +71,38 @@ const tabs = ref<MenuItem[]>([])
 const selectedTab = ref(0)
 
 // 탭 열기
-const openTab = async (menu: MenuItem) => {
-  if (tabs.value.some((tab) => tab.menuId === menu.menuId)) return
+const openTab = async (item: MenuItem | Screen) => {
+  let menu: MenuItem = {} as MenuItem
+  // 메뉴열기
+  if (Object.keys(item).includes('menuId')) {
+    menu = item as MenuItem
+    const findedTabIndex = tabs.value.findIndex(
+      (tab) => tab.route === menu.route,
+    )
+    if (findedTabIndex > -1) {
+      // 탭 포커스
+      selectedTab.value = findedTabIndex
+      return
+    }
+    // 화면열기
+  } else {
+    const screen = item as Screen
+    menu.menuName = screen.name
+    menu.screenId = screen.id
+    menu.route = defineAsyncComponent(() => import('../' + screen.path))
+    menu.params = screen.params
+
+    const findedTabIndex = tabs.value.findIndex(
+      (tab) => tab.screenId === screen.id,
+    )
+    if (findedTabIndex > -1) {
+      // 탭 포커스
+      selectedTab.value = findedTabIndex
+      return
+    }
+  }
+
+  // 탭 추가
   tabs.value.push(menu)
   await nextTick()
   selectedTab.value = tabs.value.length - 1
@@ -80,7 +117,7 @@ const menus = ref<MenuItem[]>([])
 
 async function selectMenus() {
   // const response = await $fetch<MenuItem[]>('/admin/system/menu', {
-  const response = await useFetch<MenuItem[]>('/admin/system/menu', {
+  const response = await $fetch<MenuItem[]>('/admin/system/menu', {
     baseURL: 'http://localhost:8080',
     method: 'get',
     headers: {
@@ -88,12 +125,18 @@ async function selectMenus() {
     },
   })
 
-  menus.value = response.data?.value || []
-  // menus.value = response
+  response.forEach((item) => {
+    if (item.screenPath) {
+      item.route = defineAsyncComponent(() => import('../' + item.screenPath))
+    }
+  })
+
+  // menus.value = response.data?.value || []
+  menus.value = response
 }
 
 onMounted(async () => {
-  // await selectMenus()
+  await selectMenus()
 })
 </script>
 
