@@ -18,18 +18,28 @@
             <TabList
               class="flex space-x-1 rounded-t-xl p-1 border-[2px] border-slate-400 bg-white"
             >
-              <Tab v-for="tab in tabs" v-slot="{ selected }" :key="tab.menuId">
+              <Tab
+                v-for="(tab, index) in tabs"
+                v-slot="{ selected }"
+                :key="tab.menuId"
+                class="flex items-center rounded-xl bg-slate-300"
+              >
                 <button
                   :class="[
-                    'w-full rounded-xl py-2.5 mr-[3rem] text-md font-medium leading-5',
+                    'w-full rounded-xl py-2.5 mx-2 text-md font-medium leading-5',
                     'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                     selected
                       ? 'bg-slate-500 text-white shadow'
-                      : 'bg-slate-300 text-blue-700 hover:bg-slate-400',
+                      : ' text-blue-700 hover:bg-slate-400',
                   ]"
                 >
                   {{ tab.menuName }}
                 </button>
+                <Icon
+                  name="lucide:x"
+                  class="w-8 h-8 text-gray-600 hover:text-red-500 inline"
+                  @click="closeTab(index)"
+                />
               </Tab>
             </TabList>
 
@@ -106,6 +116,11 @@ const openTab = async (item: MenuItem | Screen) => {
   tabs.value.push(menu)
   await nextTick()
   selectedTab.value = tabs.value.length - 1
+}
+
+const closeTab = (index: number) => {
+  tabs.value.splice(index, 1)
+  changeTab(tabs.value.length - 1)
 }
 
 // 탭 변경 이벤트
