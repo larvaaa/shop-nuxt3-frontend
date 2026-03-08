@@ -1,20 +1,33 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const loginUrl = '/user/login'
-  const skipPaths: string[] = ['/', loginUrl]
+  const skipPaths: string[] = ['/', loginUrl, '/user/signUp']
   const userStore = useUserStore()
 
-  if (!userStore.authState.isLogin && !skipPaths.includes(to.path)) {
-    let accessToken: string = ''
+  // if (skipPaths.includes(to.path)) return
 
+  if (userStore.authState.isLogin && to.path === loginUrl) {
+    return navigateTo('/')
+  }
+
+  if (!userStore.authState.isLogin) {
+    // if (to.path === loginUrl) return
+
+    // ssr시 사용자 정보 복구 시도(csr은 무시)
     if (import.meta.server) {
-      // hydration mismatch 방지하려면 서버사이드에서도 인증실패시 로그인페이지로 리다이렉트 처리
-      // 서버사이드에서는 useCookie를 사용해 직접 쿠키값을 전달해야 한다
-      accessToken = useCookie('accessToken').value ?? ''
+      const accessToken = useCookie('accessToken')
+      if (accessToken.value) {
+        try {
+          await userStore.getAuthState()
+        } catch (error: any) {
+          // accessToken.value = null
+        }
+      }
     }
 
-    await userStore.refresh(accessToken)
-    if (!userStore.authState.isLogin) {
+    // 사용자 정보가 없거나 예외 경로가 아닐경우 로그인페이지로 리다이렉트 처리
+    if (!userStore.authState.isLogin && !skipPaths.includes(to.path)) {
       return navigateTo(loginUrl)
     }
+    // TODO: 로그인이 필요한 페이지일 경우만 리다이렉트
   }
 })

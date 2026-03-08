@@ -3,36 +3,33 @@ definePageMeta({
   layout: 'page',
 })
 
-const userStore = useUserStore()
-
-interface UserInfoIF {
+interface UserInfo {
   name: string
   mobileNumber: string
 }
-
-const userInfo: Ref<UserInfoIF> = ref({
+const userStore = useUserStore()
+const userInfo: Ref<UserInfo> = ref({
   name: '',
   mobileNumber: '',
 })
 
-async function getUserInfo() {
-  const id: number = userStore.authState.memberId!
-
-  const { data, error } = await useFetch<UserInfoIF>(`/users/${id}`, {
-    baseURL: 'http://localhost:8080',
+const { data } = await customUseFetch<UserInfo>(
+  `/member-service/users/${userStore.authState.memberId}`,
+  {
     method: 'get',
-    headers: {
-      authorization: `Bearer ${userStore.authState.accessToken}`,
-    },
-  })
+  },
+)
 
-  userInfo.value.name = data.value?.name ?? ''
-  userInfo.value.mobileNumber = data.value?.mobileNumber ?? ''
-}
+watch(
+  data,
+  (newData) => {
+    userInfo.value.name = newData?.name ?? ''
+    userInfo.value.mobileNumber = newData?.mobileNumber ?? ''
+  },
+  { immediate: true },
+)
 
-onMounted(() => {
-  getUserInfo()
-})
+onMounted(() => {})
 </script>
 
 <template>

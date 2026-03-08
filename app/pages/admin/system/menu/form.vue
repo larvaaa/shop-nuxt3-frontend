@@ -1,5 +1,157 @@
+<script lang="ts" setup>
+import ScreenList from '~/pages/admin/system/screen/index.vue'
+import type { Screen } from '~~/utils/admin-menu-type'
+
+const props = defineProps<{
+  screenName: string
+}>()
+
+selectMenus()
+
+// 메뉴 레벨에 따라서 왼쪽 패딩
+const paddingClass = (level: number) => {
+  return {
+    'pl-[calc(1rem_*_1)]': level === 1,
+    'pl-[calc(1rem_*_2)]': level === 2,
+    'pl-[calc(1rem_*_3)]': level === 3,
+  }
+}
+
+const isOpen = ref(false)
+
+const menus = ref<MenuItem[]>([])
+
+const selectedIndex = ref<number>(-1)
+
+const form = ref<MenuItem>({
+  menuName: '',
+  menuId: '',
+  level: undefined,
+  parentId: '',
+  screenId: '',
+  screenName: '',
+  sort: undefined,
+  useYn: 'Y',
+})
+
+async function saveMenu() {
+  const response = await customFetch('/admin-service/admin/system/menu', {
+    method: 'post',
+    body: form.value,
+  })
+
+  // const response = await $fetch('/admin/system/menu', {
+  //   baseURL: 'http://localhost:8000',
+  //   method: 'post',
+  //   body: form.value,
+  //   headers: {
+  //     authorization: `Bearer ${useUserStore().authState.accessToken}`,
+  //   },
+  // })
+
+  alert(response)
+  selectMenus()
+}
+
+async function deleteMenu() {
+  const response = await customFetch('/admin-service/admin/system/menu', {
+    method: 'delete',
+    body: form.value,
+  })
+
+  // const response = await $fetch('/admin/system/menu', {
+  //   baseURL: 'http://localhost:8000',
+  //   method: 'delete',
+  //   body: form.value,
+  //   headers: {
+  //     authorization: `Bearer ${useUserStore().authState.accessToken}`,
+  //   },
+  // })
+
+  alert(response)
+  selectMenus()
+}
+
+async function selectMenus() {
+  const response = await customFetch<MenuItem[]>(
+    '/admin-service/admin/system/menu',
+    {
+      method: 'get',
+    },
+  )
+  // const response = await $fetch<MenuItem[]>('/admin/system/menu', {
+  //   baseURL: 'http://localhost:8000',
+  //   method: 'get',
+  //   headers: {
+  //     authorization: `Bearer ${useUserStore().authState.accessToken}`,
+  //   },
+  // })
+
+  menus.value = response
+}
+
+function removeAddedMenu() {
+  const removeIndex = menus.value.findIndex((item) => !item.menuId)
+  if (removeIndex > -1) menus.value.splice(removeIndex, 1)
+}
+
+function addMenu(parentMenu?: MenuItem) {
+  removeAddedMenu()
+
+  const levelOneMenuCount = menus.value.filter(
+    (item) => item.level === 1,
+  ).length
+
+  const childCount = menus.value.filter(
+    (item) => item.parentId === parentMenu?.menuId,
+  ).length
+
+  form.value = {
+    menuName: '',
+    menuId: '',
+    level: (parentMenu?.level || 0) + 1,
+    parentId: parentMenu?.menuId,
+    screenId: '',
+    screenName: '',
+    sort: parentMenu ? childCount + 1 : levelOneMenuCount + 1,
+    useYn: 'Y',
+  }
+
+  const addIndex =
+    menus.value.findIndex((item) => item.menuId === parentMenu?.menuId) + 1 || 0
+
+  menus.value.splice(addIndex, 0, form.value)
+
+  selectedIndex.value = addIndex
+}
+
+function clickMenu(menu: MenuItem, index: number) {
+  removeAddedMenu()
+  selectedIndex.value = menus.value.findIndex(
+    (item) => item.menuId === menu.menuId,
+  )
+  Object.assign(form.value, menu)
+}
+
+function openPopup() {
+  isOpen.value = true
+}
+
+function closePopup() {
+  isOpen.value = false
+}
+
+function setScreen(item: Screen) {
+  closePopup()
+
+  form.value.screenId = item.id
+  form.value.screenName = item.name
+}
+</script>
+
 <template>
-  <div class="flex h-[80vh] justify-around">
+  <LayoutPageScreenTitle>{{ props.screenName }}</LayoutPageScreenTitle>
+  <div class="flex h-[70vh] justify-around">
     <div class="flex-1 border-gray-200 border-2 mr-5 p-5">
       <button class="w-16 text-lg border-2 rounded-lg" @click="addMenu()">
         추가
@@ -120,141 +272,12 @@
       </div>
     </div>
     <LayerPopup v-model="isOpen">
-      <template #title> 화면목록 </template>
+      <template #title>
+        <LayoutPageScreenTitle>화면검색</LayoutPageScreenTitle>
+      </template>
       <template #default>
         <ScreenList :is-popup="true" @set-screen="setScreen"></ScreenList>
       </template>
     </LayerPopup>
   </div>
 </template>
-
-<script lang="ts" setup>
-import ScreenList from '~/pages/admin/system/screen/index.vue'
-import type { Screen } from '~~/utils/admin-menu-type'
-
-selectMenus()
-
-// 메뉴 레벨에 따라서 왼쪽 패딩
-const paddingClass = (level: number) => {
-  return {
-    'pl-[calc(1rem_*_1)]': level === 1,
-    'pl-[calc(1rem_*_2)]': level === 2,
-    'pl-[calc(1rem_*_3)]': level === 3,
-  }
-}
-
-const isOpen = ref(false)
-
-const menus = ref<MenuItem[]>([])
-
-const selectedIndex = ref<number>(-1)
-
-const form = ref<MenuItem>({
-  menuName: '',
-  menuId: '',
-  level: undefined,
-  parentId: '',
-  screenId: '',
-  screenName: '',
-  sort: undefined,
-  useYn: 'Y',
-})
-
-async function saveMenu() {
-  const response = await $fetch('/admin/system/menu', {
-    baseURL: 'http://localhost:8080',
-    method: 'post',
-    body: form.value,
-    headers: {
-      authorization: `Bearer ${useUserStore().authState.accessToken}`,
-    },
-  })
-
-  alert(response)
-  selectMenus()
-}
-
-async function deleteMenu() {
-  const response = await $fetch('/admin/system/menu', {
-    baseURL: 'http://localhost:8080',
-    method: 'delete',
-    body: form.value,
-    headers: {
-      authorization: `Bearer ${useUserStore().authState.accessToken}`,
-    },
-  })
-
-  alert(response)
-  selectMenus()
-}
-
-async function selectMenus() {
-  const response = await $fetch<MenuItem[]>('/admin/system/menu', {
-    baseURL: 'http://localhost:8080',
-    method: 'get',
-    headers: {
-      authorization: `Bearer ${useUserStore().authState.accessToken}`,
-    },
-  })
-
-  menus.value = response
-}
-
-function removeAddedMenu() {
-  const removeIndex = menus.value.findIndex((item) => !item.menuId)
-  if (removeIndex > -1) menus.value.splice(removeIndex, 1)
-}
-
-function addMenu(parentMenu?: MenuItem) {
-  removeAddedMenu()
-
-  const levelOneMenuCount = menus.value.filter(
-    (item) => item.level === 1,
-  ).length
-
-  const childCount = menus.value.filter(
-    (item) => item.parentId === parentMenu?.menuId,
-  ).length
-
-  form.value = {
-    menuName: '',
-    menuId: '',
-    level: (parentMenu?.level || 0) + 1,
-    parentId: parentMenu?.menuId,
-    screenId: '',
-    screenName: '',
-    sort: parentMenu ? childCount + 1 : levelOneMenuCount + 1,
-    useYn: 'Y',
-  }
-
-  const addIndex =
-    menus.value.findIndex((item) => item.menuId === parentMenu?.menuId) + 1 || 0
-
-  menus.value.splice(addIndex, 0, form.value)
-
-  selectedIndex.value = addIndex
-}
-
-function clickMenu(menu: MenuItem, index: number) {
-  removeAddedMenu()
-  selectedIndex.value = menus.value.findIndex(
-    (item) => item.menuId === menu.menuId,
-  )
-  Object.assign(form.value, menu)
-}
-
-function openPopup() {
-  isOpen.value = true
-}
-
-function closePopup() {
-  isOpen.value = false
-}
-
-function setScreen(item: Screen) {
-  closePopup()
-
-  form.value.screenId = item.id
-  form.value.screenName = item.name
-}
-</script>

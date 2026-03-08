@@ -63,5 +63,12 @@ async function login() {
       size="md"
       to="/user/signUp"
     />
+    <AwesomeButton
+      class="capitalize w-full md:w-auto"
+      text="접근토큰갱신"
+      type="secondary"
+      size="md"
+      @click="userStore.refreshAccessToken"
+    />
   </div>
 </template>
