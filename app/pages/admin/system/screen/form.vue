@@ -1,4 +1,37 @@
+<script lang="ts" setup>
+import type { Screen } from '~~/utils/admin-menu-type'
+const props = defineProps<{
+  params?: Record<string, string>
+  tabIndex: number
+  screenName: string
+}>()
+const emits = defineEmits<{
+  (e: 'closeTab', value: number): void
+}>()
+const { getScreen, saveScreen } = useScreen()
+const form = ref<Screen>({
+  id: '',
+  name: '',
+  path: '',
+  useYn: 'Y',
+})
+
+if (props.params?.screenId) {
+  const { data } = await getScreen(props.params?.screenId)
+  if (data.value) {
+    form.value = { ...data.value }
+  }
+}
+
+const handleSaveBtn = async (form: Screen) => {
+  const res = await saveScreen(form)
+  alert(res.message)
+  emits('closeTab', props.tabIndex)
+}
+</script>
+
 <template>
+  <LayoutPageScreenTitle>{{ props.screenName }}</LayoutPageScreenTitle>
   <div class="flex justify-center items-center h-[80vh]">
     <form class="w-1/2">
       <label>
@@ -26,42 +59,10 @@
       </div>
       <button
         class="w-full text-lg border-blue-500 border bg-blue-200 rounded-lg mt-5"
-        @click.prevent="saveScreen"
+        @click.prevent="handleSaveBtn(form)"
       >
         저장
       </button>
     </form>
   </div>
 </template>
-<script lang="ts" setup>
-import { screen } from '~/composables/useScreen'
-
-const props = defineProps<{
-  params?: Record<string, string>
-}>()
-
-const form = ref({
-  id: '',
-  name: '',
-  path: '',
-  useYn: 'Y',
-})
-
-async function saveScreen() {
-  await useCustomFetch('/screen', {
-    method: 'post',
-    body: form.value,
-  })
-}
-
-onMounted(async () => {
-  if (props.params?.screenId) {
-    await getScreen(props.params?.screenId)
-
-    form.value.id = screen.value.id!
-    form.value.name = screen.value.name!
-    form.value.path = screen.value.path!
-    form.value.useYn = screen.value.useYn!
-  }
-})
-</script>

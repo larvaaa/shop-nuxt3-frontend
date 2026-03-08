@@ -12,6 +12,8 @@ const signUpForm = ref({
 
 const isLoading = ref(false)
 
+const isCheckDuplicate = ref(false)
+
 async function checkDuplicate(): Promise<boolean> {
   let checkResult: string | null = null
   isLoading.value = true
@@ -22,15 +24,17 @@ async function checkDuplicate(): Promise<boolean> {
   }
 
   try {
-    const { data, error } = await useFetch<string>('/duplicateCheck', {
-      baseURL: 'http://localhost:8080',
-      method: 'get',
-      query: {
-        loginId: signUpForm.value.loginId,
+    const response = await customFetch<string>(
+      '/member-service/duplicateCheck',
+      {
+        method: 'get',
+        query: {
+          loginId: signUpForm.value.loginId,
+        },
       },
-    })
+    )
 
-    checkResult = data.value
+    checkResult = response
   } catch (error) {
     alert('잠시 문제가 발생했습니다.')
     return false
@@ -41,9 +45,11 @@ async function checkDuplicate(): Promise<boolean> {
   if (checkResult === 'N') {
     alert('이미 존재하는 아이디 입니다')
     return false
+  } else {
+    alert('사용 가능한 아이디 입니다')
+    isCheckDuplicate.value = true
+    return true
   }
-  alert('사용 가능한 아이디 입니다')
-  return true
 }
 
 async function signUp() {
@@ -61,13 +67,18 @@ async function signUp() {
     return
   }
 
-  if (!(await checkDuplicate())) return false
+  if (!isCheckDuplicate.value) {
+    alert('중복체크를 해주세요')
+    return false
+  }
 
-  const { data, error } = await useFetch('/users', {
-    baseURL: 'http://localhost:8080',
+  const response = await customFetch('/member-service/users', {
     method: 'post',
-    body: signUpForm,
+    body: signUpForm.value,
   })
+
+  alert('회원가입이 완료되었습니다.')
+  navigateTo('/user/login', { replace: true })
 
   signUpForm.value.loginId = ''
   signUpForm.value.loginPw = ''

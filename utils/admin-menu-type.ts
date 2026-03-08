@@ -12,9 +12,13 @@ export interface MenuItem {
   params?: Record<string, string>
 }
 export interface Screen {
-  id?: string
+  id: string
   name: string
   path: string
   useYn?: string
   params?: Record<string, string>
+}
+
+export interface Search {
+  name: string
 }

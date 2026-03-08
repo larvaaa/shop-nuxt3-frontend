@@ -1,19 +1,49 @@
 import type { Screen } from '~~/utils/admin-menu-type'
 
-export const screen = ref<Screen>({} as Screen)
+export const useScreen = () => {
+  const getScreenList = (form: Search) => {
+    return customUseFetch<Screen[]>('/admin-service/screen', {
+      method: 'get',
+      query: form,
+      watch: false,
+    })
+  }
 
-export async function getScreenList() {
-  const response = await useCustomFetch<Screen[]>('/screen', {
-    method: 'get',
-  })
+  const getScreen = (id: string) => {
+    return customUseFetch<Screen>(`/admin-service/screen/${id}`, {
+      method: 'get',
+    })
+  }
 
-  return response
-}
+  const saveScreen = async (form: Screen) => {
+    let res = null
+    if (form.id) {
+      res = await customFetch(`/admin-service/screen/${form.id}`, {
+        method: 'patch',
+        body: form,
+      })
+    } else {
+      res = await customFetch('/admin-service/screen', {
+        method: 'post',
+        body: form,
+      })
+    }
 
-export async function getScreen(id: string) {
-  const response = await useCustomFetch<Screen>(`/screen/${id}`, {
-    method: 'get',
-  })
+    return res
+  }
 
-  screen.value = response
+  const deleteScreen = async (form: Screen) => {
+    const res = await customFetch(`/admin-service/screen/${form.id}`, {
+      method: 'delete',
+    })
+
+    return res
+  }
+
+  return {
+    getScreenList,
+    getScreen,
+    saveScreen,
+    deleteScreen,
+  }
 }
