@@ -3,7 +3,7 @@ export interface MenuItem {
   menuName: string
   level: number | undefined
   parentId?: string
-  route?: Component
+  route?: Component | null
   screenId?: string
   screenName?: string
   screenPath?: string
