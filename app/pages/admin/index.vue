@@ -29,7 +29,7 @@ const openTab = async (item: MenuItem | Screen) => {
     const screen = item as Screen
     menu.menuName = screen.name
     menu.screenId = screen.id
-    menu.route = defineAsyncComponent(() => import('../' + screen.path))
+    menu.route = getScreenComponent(screen.path)
     menu.params = screen.params
 
     const findedTabIndex = tabs.value.findIndex(
@@ -59,6 +59,19 @@ const changeTab = (index: number) => {
 }
 
 const menus = ref<MenuItem[]>([])
+const modules = import.meta.glob('~/pages/**/*.vue')
+
+const getScreenComponent = (path: string) => {
+  // 사용자는 'User/Profile'만 넘겨도, 로더가 경로와 확장자를 붙여줌
+  // const fullPath = `/components/screens/${path}.vue`
+  path = '/pages' + path + '.vue'
+  if (!modules[path]) {
+    console.warn(`[Loader] 파일을 찾을 수 없음: ${path}`)
+    return null
+  }
+
+  return defineAsyncComponent(modules[path] as any)
+}
 
 async function selectMenus() {
   // const response = await $fetch<MenuItem[]>('/admin/system/menu', {
@@ -79,7 +92,8 @@ async function selectMenus() {
 
   response.forEach((item) => {
     if (item.screenPath) {
-      item.route = defineAsyncComponent(() => import('../' + item.screenPath))
+      // item.route = defineAsyncComponent(() => import('..' + item.screenPath))
+      item.route = getScreenComponent(item.screenPath)
     }
   })
 
