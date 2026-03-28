@@ -10,7 +10,7 @@ function useCommonFetchOptions() {
   const headers = useRequestHeaders(['cookie'])
 
   return {
-    baseURL: config.public.apiBase,
+    baseURL: import.meta.server ? config.public.ssrBase : config.public.apiBase,
 
     // 1. 요청 인터셉터 (토큰 및 쿠키 주입)
     onRequest({ options }: any) {

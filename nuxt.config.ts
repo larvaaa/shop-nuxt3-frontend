@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     // Keys within public, will be also exposed to the client-side
     public: {
       apiBase: process.env.API_SERVER_URL,
+      ssrBase: process.env.SSR_SERVER_URL,
     },
   },
   // exp

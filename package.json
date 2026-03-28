@@ -30,7 +30,7 @@
   "scripts": {
     "build": "nuxt build ./app",
     "build:dev": "nuxt build ./app --dotenv .env.dev",
-    "dev": "nuxt dev ./app --no-clear --dotenv .env.loc",
+    "dev": "nuxt dev ./app --no-clear --dotenv .env.loc --host 0.0.0.0 --port 3000",
     "generate": "nuxt generate ./app",
     "preview": "nuxt preview ./app",
     "postinstall": "nuxt prepare ./app",
