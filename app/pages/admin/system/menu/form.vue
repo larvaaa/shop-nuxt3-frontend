@@ -169,7 +169,7 @@ function setScreen(item: Screen) {
         >
           <span v-if="!menu.menuId">신규 메뉴</span>
           <a v-else href="#" @click.prevent="clickMenu(menu, index)">
-            {{ menu.menuName + ' (' + menu.level + ')' }}
+            {{ menu.menuName + ' (' + menu.level + ' lv)' }}
           </a>
           <button
             v-if="menu.menuId"
