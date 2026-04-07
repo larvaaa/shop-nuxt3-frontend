@@ -114,7 +114,7 @@ onMounted(async () => {
       </div>
     </header>
     <div class="flex flex-1">
-      <LayoutAdminSideBar :menus="menus" @open-tab="openTab" />
+      <BoLayoutSideBar :menus="menus" @open-tab="openTab" />
       <main
         class="flex-1 flex items-center justify-center w-full h-full overflow-auto mt-[30px]"
       >

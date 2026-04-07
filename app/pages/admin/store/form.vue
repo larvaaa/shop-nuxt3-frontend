@@ -1,52 +1,93 @@
 <script lang="ts" setup>
-import SearchButton from '~~/components/common/SearchButton.vue'
-import Grid from '~~/components/common/Grid.vue'
-
 const searchAddress = () => {}
 
 const props = defineProps<{
   screenName: string
 }>()
 
+// 컬럼 속성 정의
 const columns = ref([
-  {
-    key: 'name',
-    name: '이름',
-  },
-  {
-    key: 'age',
-    name: '나이',
-  },
-  {
-    key: 'city',
-    name: '도시',
-  },
+  { headerName: '요일', field: 'dayOfWeek' },
+  { headerName: '오픈시간', field: 'openTime' },
+  { headerName: '마감시간', field: 'closeTime' },
+  { headerName: '휴게 시작시간', field: 'breakStart' },
+  { headerName: '휴게 종료시간', field: 'breakEnd' },
+  { headerName: '정기휴무일여부', field: 'isDayOff' },
 ])
 
+// 기본 컬럼 속성 (모든 컬럼에 공통 적용)
+const defaultColDef = ref({
+  sortable: true,
+  filter: false,
+  flex: 1,
+})
+
+// 그리드에 표시될 데이터
 const list = ref([
   {
-    name: 'tony',
-    age: 20,
-    city: 'seoul',
+    dayOfWeek: '월',
+    openTime: '11:00',
+    closeTime: '23:00',
+    breakStart: '15:00',
+    breakEnd: '16:00',
+    isDayOff: 'Y',
   },
   {
-    name: 'tony',
-    age: 20,
-    city: 'seoul',
+    dayOfWeek: '화',
+    openTime: '11:00',
+    closeTime: '23:00',
+    breakStart: '15:00',
+    breakEnd: '16:00',
+    isDayOff: 'Y',
   },
   {
-    name: 'tony',
-    age: 20,
-    city: 'seoul',
+    dayOfWeek: '수',
+    openTime: '11:00',
+    closeTime: '23:00',
+    breakStart: '15:00',
+    breakEnd: '16:00',
+    isDayOff: 'Y',
+  },
+  {
+    dayOfWeek: '목',
+    openTime: '11:00',
+    closeTime: '23:00',
+    breakStart: '15:00',
+    breakEnd: '16:00',
+    isDayOff: 'Y',
+  },
+  {
+    dayOfWeek: '금',
+    openTime: '11:00',
+    closeTime: '23:00',
+    breakStart: '15:00',
+    breakEnd: '16:00',
+    isDayOff: 'Y',
+  },
+  {
+    dayOfWeek: '토',
+    openTime: '11:00',
+    closeTime: '23:00',
+    breakStart: '15:00',
+    breakEnd: '16:00',
+    isDayOff: 'Y',
+  },
+  {
+    dayOfWeek: '일',
+    openTime: '11:00',
+    closeTime: '23:00',
+    breakStart: '15:00',
+    breakEnd: '16:00',
+    isDayOff: 'Y',
   },
 ])
 
 definePageMeta({ layout: 'admin' })
 </script>
 <template>
-  <LayoutPageScreenTitle v-if="props.screenName">{{
+  <BoItemScreenHeader v-if="props.screenName" :show-register="true">{{
     props.screenName
-  }}</LayoutPageScreenTitle>
+  }}</BoItemScreenHeader>
   <form class="flex flex-col gap-4">
     <!-- grid 영역 start -->
     <div class="grid grid-cols-2 gap-5 border-stone-300 p-2 border">
@@ -90,8 +131,8 @@ definePageMeta({ layout: 'admin' })
               type="text"
               placeholder="우편번호"
             />
-            <SearchButton class="p-1" @click="searchAddress"
-              >주소 검색</SearchButton
+            <BoItemSearchButton class="p-1" @click="searchAddress"
+              >주소 검색</BoItemSearchButton
             >
           </span>
         </span>
@@ -125,8 +166,8 @@ definePageMeta({ layout: 'admin' })
             readonly
             class="border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 basis-5/6"
           />
-          <SearchButton class="p-1" @click="searchAddress"
-            >브랜드 검색</SearchButton
+          <BoItemSearchButton class="p-1" @click="searchAddress"
+            >브랜드 검색</BoItemSearchButton
           >
         </span>
       </div>
@@ -152,14 +193,13 @@ definePageMeta({ layout: 'admin' })
     <!-- grid 영역 end -->
     <!-- 영업시간 테이블 영역 시작 -->
     <div>
-      <Grid class="mb-10" :columns="columns" :list="list"></Grid>
+      <BoItemAgGrid
+        class="mb-10 h-80 w-full"
+        :column-defs="columns"
+        :row-data="list"
+        :default-col-def="defaultColDef"
+      ></BoItemAgGrid>
     </div>
     <!-- 영업시간 테이블 영역 끝 -->
   </form>
-  <button
-    type="submit"
-    class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-  >
-    등록하기
-  </button>
 </template>

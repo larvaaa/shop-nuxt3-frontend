@@ -31,7 +31,7 @@ const handleSaveBtn = async (form: Screen) => {
 </script>
 
 <template>
-  <LayoutPageScreenTitle>{{ props.screenName }}</LayoutPageScreenTitle>
+  <BoItemScreenHeader>{{ props.screenName }}</BoItemScreenHeader>
   <div class="flex justify-center items-center h-[80vh]">
     <form class="w-1/2">
       <label>

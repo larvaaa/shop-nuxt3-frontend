@@ -1,40 +1,3 @@
-<template>
-  <aside
-    class="w-[165px] bg-white rounded-r shadow min-h-screen py-6 flex-shrink-0"
-  >
-    <nav>
-      <ul class="space-y-2 relative">
-        <template v-for="menu in props.menus" :key="menu.menuId">
-          <li v-if="opens.includes(menu.menuId)">
-            <button
-              class="w-full text-left py-2 rounded hover:bg-slate-200 text-gray-700 font-bold flex items-center relative"
-              :class="menuFontWeight[menu.level!]"
-              :style="{
-                paddingLeft: `${(menu.level! - 1) * 18 + 16}px`,
-              }"
-              @click="toggle(menu)"
-            >
-              <span class="block">
-                {{ menu.menuName }}
-              </span>
-              <span
-                v-if="hasChildren(menu.menuId, menu.level! + 1)"
-                class="ml-2"
-                :class="
-                  isExtend(menu.menuId)
-                    ? 'rotate-90 duration-200'
-                    : 'rotate-0 duration-200'
-                "
-                >{{ '>' }}</span
-              >
-            </button>
-          </li>
-        </template>
-      </ul>
-    </nav>
-  </aside>
-</template>
-
 <script lang="ts" setup>
 const props = defineProps<{
   menus: MenuItem[]
@@ -116,3 +79,40 @@ watch(
   { deep: true },
 )
 </script>
+
+<template>
+  <aside
+    class="w-[165px] bg-white rounded-r shadow min-h-screen py-6 flex-shrink-0"
+  >
+    <nav>
+      <ul class="space-y-2 relative">
+        <template v-for="menu in props.menus" :key="menu.menuId">
+          <li v-if="opens.includes(menu.menuId)">
+            <button
+              class="w-full text-left py-2 rounded hover:bg-slate-200 text-gray-700 font-bold flex items-center relative"
+              :class="menuFontWeight[menu.level!]"
+              :style="{
+                paddingLeft: `${(menu.level! - 1) * 18 + 16}px`,
+              }"
+              @click="toggle(menu)"
+            >
+              <span class="block">
+                {{ menu.menuName }}
+              </span>
+              <span
+                v-if="hasChildren(menu.menuId, menu.level! + 1)"
+                class="ml-2"
+                :class="
+                  isExtend(menu.menuId)
+                    ? 'rotate-90 duration-200'
+                    : 'rotate-0 duration-200'
+                "
+                >{{ '>' }}</span
+              >
+            </button>
+          </li>
+        </template>
+      </ul>
+    </nav>
+  </aside>
+</template>
