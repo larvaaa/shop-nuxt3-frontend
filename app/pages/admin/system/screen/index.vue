@@ -52,9 +52,9 @@ const handelDelBtn = async (item: Screen) => {
 
 <template>
   <div>
-    <LayoutPageScreenTitle v-if="props.screenName">{{
+    <BoItemScreenHeader v-if="props.screenName">{{
       props.screenName
-    }}</LayoutPageScreenTitle>
+    }}</BoItemScreenHeader>
     <div class="border-2 mb-3 h-24 relative p-2">
       <div class="flex justify-start gap-5">
         <label class="px-2 flex items-center gap-2 w-1/3">

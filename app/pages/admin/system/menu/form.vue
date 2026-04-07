@@ -150,7 +150,7 @@ function setScreen(item: Screen) {
 </script>
 
 <template>
-  <LayoutPageScreenTitle>{{ props.screenName }}</LayoutPageScreenTitle>
+  <BoItemScreenHeader>{{ props.screenName }}</BoItemScreenHeader>
   <div class="flex h-[70vh] justify-around">
     <div class="flex-1 border-gray-200 border-2 mr-5 p-5">
       <button class="w-16 text-lg border-2 rounded-lg" @click="addMenu()">
@@ -273,7 +273,7 @@ function setScreen(item: Screen) {
     </div>
     <LayerPopup v-model="isOpen">
       <template #title>
-        <LayoutPageScreenTitle>화면검색</LayoutPageScreenTitle>
+        <BoItemScreenHeader>화면검색</BoItemScreenHeader>
       </template>
       <template #default>
         <ScreenList :is-popup="true" @set-screen="setScreen"></ScreenList>

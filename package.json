@@ -47,6 +47,8 @@
     "@pinia/nuxt": "^0.5.1",
     "@vueuse/core": "^10.5.0",
     "@vueuse/nuxt": "^10.5.0",
+    "ag-grid-community": "^35.2.0",
+    "ag-grid-vue3": "^35.2.0",
     "nuxt-headlessui": "^1.1.4",
     "nuxt-icon": "^0.6.1",
     "pinia": "^2.1.7",
