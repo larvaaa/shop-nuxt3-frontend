@@ -6,6 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - 음식배달 앱
 - FO, BO가 통합되어 있음
+- 기술: nuxt3, typescript
 
 ## Commands
 
@@ -89,3 +90,7 @@ pnpm lint:fix
 ### 아이콘
 
 `nuxt-icon` 모듈 사용. `<Icon name="mdi:..." />` 형태로 사용 (Material Design Icons 등).
+
+## 디자인 시스템
+
+UI 작업 시 반드시 `/design.md`를 참조하세요. 색상, 타이포그래피, 컴포넌트 스타일, 레이아웃 간격 등 디자인 가이드라인이 정의되어 있습니다.

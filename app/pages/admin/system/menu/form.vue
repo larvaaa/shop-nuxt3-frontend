@@ -271,13 +271,13 @@ function setScreen(item: Screen) {
         </button>
       </div>
     </div>
-    <LayerPopup v-model="isOpen">
+    <BoItemLayerPopup v-model="isOpen">
       <template #title>
         <BoItemScreenHeader>화면검색</BoItemScreenHeader>
       </template>
       <template #default>
         <ScreenList :is-popup="true" @set-screen="setScreen"></ScreenList>
       </template>
-    </LayerPopup>
+    </BoItemLayerPopup>
   </div>
 </template>

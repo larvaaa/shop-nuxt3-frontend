@@ -107,21 +107,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col">
+  <div class="h-screen bg-gray-100 flex flex-col">
     <header class="bg-blue-800 text-white py-4 shadow">
-      <div class="container mx-auto px-4 flex items-center justify-between">
+      <div class="container px-5 flex items-center justify-between">
         <h1 class="text-xl font-bold">관리자 페이지</h1>
       </div>
     </header>
-    <div class="flex flex-1">
+    <div class="flex flex-1 overflow-hidden">
       <BoLayoutSideBar :menus="menus" @open-tab="openTab" />
-      <main
-        class="flex-1 flex items-center justify-center w-full h-full overflow-auto mt-[30px]"
-      >
-        <div
-          v-if="tabs.length"
-          class="w-[calc(100%-50px)] h-[calc(100%-50px)] px-2 py-2 sm:px-0"
-        >
+      <main class="flex-1 flex justify-center w-full py-5">
+        <div v-if="tabs.length" class="w-[calc(100%-40px)] overflow-auto">
           <TabGroup as="div" :selected-index="selectedTab" @change="changeTab">
             <TabList
               class="flex space-x-1 rounded-t-xl p-1 border-[2px] border-slate-400 bg-white"
@@ -152,7 +147,7 @@ onMounted(async () => {
             </TabList>
 
             <TabPanels
-              class="border-x-[2px] border-b-[2px] border-slate-400 h-[80vh] bg-white"
+              class="border-x-[2px] border-b-[2px] border-slate-400 bg-white"
             >
               <TabPanel
                 v-for="(tab, index) in tabs"

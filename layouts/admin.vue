@@ -55,7 +55,6 @@
 
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import Publish1 from '../pages/publish/publish1.vue' // app 디렉토리 외부의 파일은 상대결로로 참조가능
 
 const tabs = ref<MenuItem[]>([
   // {
@@ -131,7 +130,7 @@ const menus = ref<MenuItem[]>([
     menuName: '상품 등록',
     menuLevel: 2,
     parentId: '1',
-    route: defineAsyncComponent(() => import('~/pages/admin/product/form.vue')),
+    route: defineAsyncComponent(() => import('~/pages/admin/store/form.vue')),
   },
   { menuId: '2', menuName: '회원 관리', menuLevel: 1 },
   {
