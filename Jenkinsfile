@@ -15,7 +15,10 @@ pipeline {
 
         stage('2. Build (Nuxt3)') {
             steps {
-                sh '''                   
+                sh '''                 
+                    # 최대 메모리를 2GB 제한
+                    export NODE_OPTIONS="--max-old-space-size=2048"
+
                     # pnpm-lock.yaml을 기반으로 빠르고 정확하게 패키지를 설치합니다.
                     pnpm install
                     
