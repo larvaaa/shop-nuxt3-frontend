@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         // 프론트엔드 전용 도구인 Node.js를 불러옵니다. (플러그인 설치 시 만든 이름)
-        nodejs 'Node20' 
+        nodejs 'Node23' 
     }
 
     stages {
