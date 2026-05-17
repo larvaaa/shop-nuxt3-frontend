@@ -3,4 +3,7 @@ packages:
   - ./
 onlyBuiltDependencies:
   - '@nuxt-awesome/theme'
+  - '@parcel/watcher'
+  - esbuild
+  - unrs-resolver
   - vue-demi
