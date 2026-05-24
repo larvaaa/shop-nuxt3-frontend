@@ -17,10 +17,16 @@ pipeline {
                     # CI 환경에서 minimumReleaseAge 공급망 정책 우회
                     echo "minimum-release-age=0" >> .npmrc
 
-                    # 이전 빌드의 node_modules 제거 (onlyBuiltDependencies 재평가를 위해)
+                    # 이전 빌드의 node_modules 제거
                     rm -rf node_modules .demo/node_modules
 
-                    # 패키지를 설치합니다.
+                    # 1차 설치 (패키지 다운로드, IGNORED_BUILDS 오류는 무시)
+                    pnpm install || true
+
+                    # 빌드 스크립트 승인
+                    pnpm approve-builds "@nuxt-awesome/theme" "@parcel/watcher" esbuild vue-demi
+
+                    # 2차 설치 (승인된 빌드 스크립트 실행)
                     pnpm install
 
                     # 운영 서버용 빌드를 실행합니다! (package.json 확인 후 알맞게 변경하세요)
