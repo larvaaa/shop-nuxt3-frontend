@@ -17,6 +17,9 @@ pipeline {
                     # CI 환경에서 minimumReleaseAge 공급망 정책 우회
                     echo "minimum-release-age=0" >> .npmrc
 
+                    # 이전 빌드의 node_modules 제거 (onlyBuiltDependencies 재평가를 위해)
+                    rm -rf node_modules .demo/node_modules
+
                     # 패키지를 설치합니다.
                     pnpm install
 
