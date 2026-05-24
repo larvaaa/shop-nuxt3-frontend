@@ -51,7 +51,7 @@ pipeline {
                     else
                         echo "새 프로세스 실행 (Start)"
                         # 포트 3000번으로 pm2 백그라운드 실행
-                        PORT=3000 pm2 start .output/server/index.mjs --name "shop-frontend"
+                        PORT=3000 pm2 start app/.output/server/index.mjs --name "shop-frontend"
                     fi
                     
                     # 서버 재부팅을 대비해 현재 PM2 상태 저장
