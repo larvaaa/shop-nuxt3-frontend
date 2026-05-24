@@ -1,3 +1,9 @@
 packages:
   - .demo/
   - ./
+
+onlyBuiltDependencies:
+  - "@nuxt-awesome/theme"
+  - "@parcel/watcher"
+  - esbuild
+  - vue-demi
