@@ -24,7 +24,7 @@ pipeline {
                     pnpm install || true
 
                     # 빌드 스크립트 승인
-                    pnpm approve-builds "@nuxt-awesome/theme" "@parcel/watcher" esbuild vue-demi
+                    pnpm approve-builds --all
 
                     # 2차 설치 (승인된 빌드 스크립트 실행)
                     pnpm install
