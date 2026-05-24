@@ -6,31 +6,27 @@ pipeline {
     }
 
     stages {
-        stage('1. Checkout') {
+        stage('1. Build (Nuxt3)') {
             steps {
-                // 프론트엔드 깃허브 저장소 주소로 변경해주세요.
-                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/larvaaa/shop-nuxt3-frontend.git'
-            }
-        }
-
-        stage('2. Build (Nuxt3)') {
-            steps {
-                sh '''                 
+                sh '''
                     # 최대 메모리를 2GB 제한
                     export NODE_OPTIONS="--max-old-space-size=2048"
 
                     npm install -g pnpm
 
+                    # CI 환경에서 minimumReleaseAge 공급망 정책 우회
+                    echo "minimum-release-age=0" >> .npmrc
+
                     # pnpm-lock.yaml을 기반으로 빠르고 정확하게 패키지를 설치합니다.
-                    pnpm install
-                    
+                    pnpm install --frozen-lockfile
+
                     # 운영 서버용 빌드를 실행합니다! (package.json 확인 후 알맞게 변경하세요)
                     pnpm run build:dev
                 '''
             }
         }
 
-        stage('3. Deploy (PM2)') {
+        stage('2. Deploy (PM2)') {
             steps {
                 script { env.JENKINS_NODE_COOKIE = 'dontKillMe' }
                 echo "PM2를 이용한 프론트엔드 무중단 배포 시작..."
