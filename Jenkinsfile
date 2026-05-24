@@ -17,8 +17,8 @@ pipeline {
                     # CI 환경에서 minimumReleaseAge 공급망 정책 우회
                     echo "minimum-release-age=0" >> .npmrc
 
-                    # pnpm-lock.yaml을 기반으로 빠르고 정확하게 패키지를 설치합니다.
-                    pnpm install --frozen-lockfile
+                    # 패키지를 설치합니다.
+                    pnpm install
 
                     # 운영 서버용 빌드를 실행합니다! (package.json 확인 후 알맞게 변경하세요)
                     pnpm run build:dev
