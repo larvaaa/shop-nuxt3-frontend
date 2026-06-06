@@ -75,6 +75,8 @@ const openTab = async (menu: MenuItem) => {
   selectedTab.value = tabs.value.length - 1
 }
 
+provide('openTab', openTab)
+
 // 탭 변경 이벤트
 const changeTab = (index: number) => {
   selectedTab.value = index
@@ -131,6 +133,30 @@ const menus = ref<MenuItem[]>([
     menuLevel: 2,
     parentId: '1',
     route: defineAsyncComponent(() => import('~/pages/admin/store/form.vue')),
+  },
+  {
+    menuId: '13',
+    menuName: '브랜드 관리',
+    menuLevel: 2,
+    parentId: '1',
+  },
+  {
+    menuId: '14',
+    menuName: '브랜드 목록',
+    menuLevel: 3,
+    parentId: '13',
+    route: defineAsyncComponent(
+      () => import('~/pages/admin/store/brand/index.vue'),
+    ),
+  },
+  {
+    menuId: '15',
+    menuName: '브랜드 등록',
+    menuLevel: 3,
+    parentId: '13',
+    route: defineAsyncComponent(
+      () => import('~/pages/admin/store/brand/form.vue'),
+    ),
   },
   { menuId: '2', menuName: '회원 관리', menuLevel: 1 },
   {

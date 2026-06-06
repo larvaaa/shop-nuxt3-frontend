@@ -6,6 +6,8 @@ import type {
   RowSelectionOptions,
 } from 'ag-grid-community'
 import TimeCellEditor from '~~/components/bo/item/TimeCellEditor.vue'
+import BrandList from '~/pages/admin/store/brand/popup.vue'
+import type { Brand } from '~~/types/admin/brand'
 
 enum DayOfWeek {
   MON = 'MON',
@@ -47,7 +49,12 @@ const DayOfWeekLabel: Record<DayOfWeek, string> = {
 }
 
 const props = defineProps<{
+  screenId: string
   screenName: string
+}>()
+
+const emits = defineEmits<{
+  (e: 'closeTab', value: string): void
 }>()
 
 // 전화번호 분리 입력
@@ -87,7 +94,7 @@ const flattenedCategoryOptions = computed(() => {
 })
 
 const removeCategory = (id: number) => {
-  form.category = form.category.filter((cId) => cId !== id)
+  form.categoryIds = form.categoryIds.filter((cId) => cId !== id)
 }
 
 // 폼 데이터
@@ -96,7 +103,7 @@ const form = reactive({
   postalCode: '',
   address: '',
   detailAddress: '',
-  category: [] as number[],
+  categoryIds: [] as number[],
   brandId: '',
   estimatedDeliveryTime: '',
   minOrderPrice: '',
@@ -126,7 +133,8 @@ const validate = () => {
   rules.forEach(({ key, label }) => {
     if (!form[key]) errors[key] = `${label}을(를) 입력해주세요.`
   })
-  if (form.category.length === 0) errors.category = '카테고리를 선택해주세요.'
+  if (form.categoryIds.length === 0)
+    errors.category = '카테고리를 선택해주세요.'
   return Object.keys(errors).length === 0
 }
 
@@ -304,6 +312,27 @@ const storeOperationHour = ref<StoreOperationHour[]>([
   },
 ])
 
+function openBrandSearchPopup() {
+  isBrandPopVisible.value = true
+}
+
+function closeBrandSearchPopup() {
+  isBrandPopVisible.value = false
+}
+
+const isBrandPopVisible = ref(false)
+const brand = ref<Brand | null>(null)
+
+function setBrand(b: Brand) {
+  brand.value = b
+  form.brandId = brand.value.id
+  closeBrandSearchPopup()
+}
+
+function close() {
+  emits('closeTab', props.screenId)
+}
+
 definePageMeta({ layout: 'admin' })
 </script>
 <template>
@@ -446,7 +475,7 @@ definePageMeta({ layout: 'admin' })
         <div class="flex flex-row items-start w-full">
           <label class="basis-1/6 text-gray-700 mt-2">카테고리</label>
           <div class="basis-5/6 relative">
-            <HeadlessCombobox v-model="form.category" :multiple="true">
+            <HeadlessCombobox v-model="form.categoryIds" :multiple="true">
               <div class="relative">
                 <div
                   class="border rounded px-3 py-2 min-h-[42px] flex flex-wrap gap-1 items-center pr-10"
@@ -455,12 +484,12 @@ definePageMeta({ layout: 'admin' })
                   "
                 >
                   <span
-                    v-if="form.category.length === 0"
+                    v-if="form.categoryIds.length === 0"
                     class="text-gray-400 text-sm"
                     >카테고리 선택...</span
                   >
                   <span
-                    v-for="id in form.category"
+                    v-for="id in form.categoryIds"
                     :key="id"
                     class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full"
                   >
@@ -533,7 +562,7 @@ definePageMeta({ layout: 'admin' })
           <span class="basis-5/6 flex flex-row items-center gap-5">
             <input
               id="brand"
-              v-model="form.brandId"
+              :value="brand?.name"
               type="text"
               readonly
               class="border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 basis-5/6"
@@ -542,7 +571,7 @@ definePageMeta({ layout: 'admin' })
             <BoItemSearchButton
               variant="secondary"
               size="sm"
-              @click="searchAddress"
+              @click="openBrandSearchPopup"
               >브랜드 검색</BoItemSearchButton
             >
           </span>
@@ -615,7 +644,22 @@ definePageMeta({ layout: 'admin' })
     <!-- 영업시간 테이블 영역 끝 -->
   </form>
 
-  <BoItemAlertNotice v-model="showNotice" message="등록이 완료되었습니다." />
+  <BoItemAlertNotice
+    v-model="showNotice"
+    message="등록이 완료되었습니다."
+    @confirm="close"
+  />
+
+  <!-- 브랜드 검색 팝업 -->
+  <BoItemLayerPopup v-model="isBrandPopVisible">
+    <template #title>
+      <BoItemScreenHeader>브랜드 검색</BoItemScreenHeader>
+    </template>
+    <template #default>
+      <BrandList @set-brand="setBrand"></BrandList>
+    </template>
+  </BoItemLayerPopup>
+  <!-- 브랜드 검색 팝업 -->
 
   <!-- 주소 검색 팝업 -->
   <Teleport to="body">

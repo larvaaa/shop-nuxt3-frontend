@@ -9,6 +9,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'setScreen', value: Screen): void
   (e: 'openTab', value: Screen): void
+  (e: 'closeTab', value: string): void
 }>()
 
 const searchForm = ref({
@@ -39,6 +40,7 @@ const handleModBtn = (item: Screen) => {
         screenId: item.id!,
       },
     }
+    emits('closeTab', SCREEN_FORM_ID)
     emits('openTab', screen)
   }
 }
