@@ -28,6 +28,7 @@ const openTab = async (item: MenuItem | Screen) => {
   } else {
     const screen = item as Screen
     menu.menuName = screen.name
+    menu.screenName = screen.name
     menu.screenId = screen.id
     menu.route = getScreenComponent(screen.path)
     menu.params = screen.params
@@ -48,8 +49,12 @@ const openTab = async (item: MenuItem | Screen) => {
   selectedTab.value = tabs.value.length - 1
 }
 
-const closeTab = (index: number) => {
-  tabs.value.splice(index, 1)
+const closeTab = (value: string) => {
+  const findedTabIndex = tabs.value.findIndex((tab) => tab.screenId === value)
+  if (findedTabIndex > -1) {
+    tabs.value.splice(findedTabIndex, 1)
+  }
+
   changeTab(tabs.value.length - 1)
 }
 
@@ -122,7 +127,7 @@ onMounted(async () => {
               class="flex space-x-1 rounded-t-xl p-1 border-[2px] border-slate-400 bg-white"
             >
               <Tab
-                v-for="(tab, index) in tabs"
+                v-for="tab in tabs"
                 v-slot="{ selected }"
                 :key="tab.menuId"
                 class="flex items-center rounded-xl bg-slate-300"
@@ -141,7 +146,7 @@ onMounted(async () => {
                 <Icon
                   name="lucide:x"
                   class="w-8 h-8 text-gray-600 hover:text-red-500 inline"
-                  @click="closeTab(index)"
+                  @click="closeTab(tab.screenId!)"
                 />
               </Tab>
             </TabList>
@@ -164,6 +169,7 @@ onMounted(async () => {
                   :params="tab.params"
                   :screen-name="tab.screenName"
                   :tab-index="index"
+                  :screen-id="tab.screenId"
                   @open-tab="openTab"
                   @close-tab="closeTab"
                 />

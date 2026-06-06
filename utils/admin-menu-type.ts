@@ -1,6 +1,7 @@
 export interface MenuItem {
   menuId: string
   menuName: string
+  parentMenuName: string
   level: number | undefined
   parentId?: string
   route?: Component | null

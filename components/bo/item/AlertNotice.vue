@@ -35,9 +35,7 @@ const onConfirm = () => {
             <Icon name="mdi:check-circle" class="w-7 h-7 text-[#0050cb]" />
           </div>
         </div>
-        <HeadlessDialogTitle
-          class="text-xl font-semibold text-[#191b24] mb-2"
-        >
+        <HeadlessDialogTitle class="text-xl font-semibold text-[#191b24] mb-2">
           {{ title }}
         </HeadlessDialogTitle>
         <p class="text-sm text-[#424656] text-center mb-8">{{ message }}</p>

@@ -1,3 +1,21 @@
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    showSearch?: boolean
+    showRegister?: boolean
+  }>(),
+  {
+    showSearch: false,
+    showRegister: false,
+  },
+)
+
+const emit = defineEmits<{
+  search: []
+  register: []
+}>()
+</script>
+
 <template>
   <div class="p-2 flex items-center justify-between w-full">
     <p class="font-bold text-xl text-slate-600 flex items-center gap-2">
@@ -25,21 +43,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-withDefaults(
-  defineProps<{
-    showSearch?: boolean
-    showRegister?: boolean
-  }>(),
-  {
-    showSearch: false,
-    showRegister: false,
-  },
-)
-
-const emit = defineEmits<{
-  search: []
-  register: []
-}>()
-</script>
