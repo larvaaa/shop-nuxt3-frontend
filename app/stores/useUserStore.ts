@@ -62,10 +62,11 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const refreshAccessToken = async () => {
-    console.log('토큰갱신 요청')
+    console.log('접근토큰갱신 요청')
     const fetchOptions: any = {
       method: 'POST',
       headers: {},
+      credentials: 'include',
     }
 
     // 서버 사이드이고, 전달받은 헤더가 있다면 추가

@@ -34,40 +34,11 @@ function useCommonFetchOptions() {
     // 2. 에러 인터셉터 (401 토큰 만료 처리)
     async onResponseError({ response }: any) {
       if (response.status === 401) {
-        console.log('인증 실패: 401 Unauthorized')
+        const { tokenType, errorType } = response._data || {}
 
-        const { tokenType, failCode } = response._data || {}
-        console.log('tokenType:', tokenType, ',', 'failCode', failCode)
-
-        if (tokenType === 'ACCESS') {
-          switch (failCode) {
-            case 'EXPIRED':
-              // 토큰 갱신 시도
-              // console.log('headers: ', headers)
-              await userStore.refreshAccessToken()
-
-              /**
-               * 💡 중요: 여기서 '원래 요청 재시도' 로직이 빠져 있습니다.
-               * $fetch의 경우 단순히 refresh만 하면 원래 요청은 실패한 채로 끝납니다.
-               * 재시도 로직이 필요하다면 추가 구현이 필요합니다.
-               */
-              break
-            case 'INVALID_SIGNATURE':
-              break
-            case 'MALFORMED':
-              break
-            case 'UNSUPPORTED':
-              break
-            case 'EMPTY':
-              navigateTo('/login')
-              break
-            case 'UNKNOWN':
-              break
-            default:
-              break
-          }
-        } else if (tokenType === 'REFRESH') {
-          // 리프레시 토큰 문제 발생 시 즉시 로그인 페이지로
+        if (tokenType === 'ACCESS' && errorType === 'EXPIRED') {
+          await userStore.refreshAccessToken()
+        } else if (tokenType === 'REFRESH' || errorType === 'EMPTY') {
           navigateTo('/login')
         }
       }
@@ -93,17 +64,15 @@ export async function customFetch<T = any>(
     // 첫 번째 시도
     return await $fetch<T>(request, params)
   } catch (error: any) {
-    // 401 에러가 발생했고, 토큰 갱신이 성공했다면 (onResponseError가 먼저 실행됨)
-    // 에러 객체의 속성을 확인하여 "만료"였던 경우에만 재시도
-    const isExpired = error.response?._data?.failCode === 'EXPIRED'
+    const isAccessTokenExpired =
+      error.response?.status === 401 &&
+      error.response?._data?.tokenType === 'ACCESS' &&
+      error.response?._data?.errorType === 'EXPIRED'
 
-    if (error.response?.status === 401 && isExpired) {
-      console.log('♻️ 토큰 갱신 후 요청 재시도...')
-      // 재시도 시에는 갱신된 토큰이 onRequest에서 자동으로 들어갑니다.
+    if (isAccessTokenExpired) {
       return await $fetch<T>(request, params)
     }
 
-    // 그 외의 에러는 그대로 던짐
     throw error
   }
 }
