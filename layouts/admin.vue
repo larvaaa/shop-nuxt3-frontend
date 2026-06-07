@@ -1,3 +1,111 @@
+<script setup lang="ts">
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+
+const tabs = ref<MenuItem[]>([
+  // {
+  //   menuId: '1',
+  //   menuName: 'tab1',
+  //   level: 2,
+  // },
+])
+
+// 현재 선택된 탭
+const selectedTab = ref(0)
+
+// 탭 열기
+const openTab = async (menu: MenuItem) => {
+  if (tabs.value.some((tab) => tab.menuId === menu.menuId)) return
+  tabs.value.push(menu)
+  await nextTick()
+  selectedTab.value = tabs.value.length - 1
+}
+
+provide('openTab', openTab)
+
+// 탭 변경 이벤트
+const changeTab = (index: number) => {
+  selectedTab.value = index
+}
+
+const menus = ref<MenuItem[]>([
+  // { menuId: '3', menuName: '시스템 관리', level: 1 },
+  // {
+  //   menuId: '9',
+  //   menuName: '메뉴 관리',
+  //   level: 2,
+  //   parentId: '3',
+  // },
+  // {
+  //   menuId: '11',
+  //   menuName: '메뉴 등록',
+  //   level: 3,
+  //   parentId: '9',
+  //   route: defineAsyncComponent(
+  //     () => import('~/pages/admin/system/menu/index.vue'),
+  //   ),
+  // },
+  // {
+  //   menuId: '12',
+  //   menuName: '메뉴 목록',
+  //   level: 3,
+  //   parentId: '9',
+  //   route: defineAsyncComponent(
+  //     () => import('~/pages/admin/system/menu/index.vue'),
+  //   ),
+  // },
+  // {
+  //   menuId: '10',
+  //   menuName: '화면 관리',
+  //   level: 2,
+  //   parentId: '3',
+  // },
+  // { menuId: '1', menuName: '상품 관리', level: 1 },
+  // {
+  //   menuId: '4',
+  //   menuName: '상품 목록',
+  //   level: 2,
+  //   parentId: '1',
+  // },
+  // {
+  //   menuId: '6',
+  //   menuName: '상품 상세 목록',
+  //   level: 3,
+  //   parentId: '4',
+  // },
+  // {
+  //   menuId: '5',
+  //   menuName: '상품 등록',
+  //   level: 2,
+  //   parentId: '1',
+  //   route: defineAsyncComponent(() => import('~/pages/admin/store/form.vue')),
+  // },
+  // {
+  //   menuId: '13',
+  //   menuName: '브랜드 관리',
+  //   level: 2,
+  //   parentId: '1',
+  // },
+  // {
+  //   menuId: '14',
+  //   menuName: '브랜드 목록',
+  //   level: 3,
+  //   parentId: '13',
+  //   route: defineAsyncComponent(
+  //     () => import('~/pages/admin/store/brand/index.vue'),
+  //   ),
+  // },
+  // {
+  //   menuId: '15',
+  //   menuName: '브랜드 등록',
+  //   level: 3,
+  //   parentId: '13',
+  //   route: defineAsyncComponent(
+  //     () => import('~/pages/admin/store/brand/form.vue'),
+  //   ),
+  // },
+])
+</script>
+
 <template>
   <div class="min-h-screen bg-gray-100 flex flex-col">
     <NuxtPage />
@@ -52,127 +160,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-
-const tabs = ref<MenuItem[]>([
-  // {
-  //   menuId: '1',
-  //   menuName: 'tab1',
-  //   menuLevel: 2,
-  // },
-])
-
-// 현재 선택된 탭
-const selectedTab = ref(0)
-
-// 탭 열기
-const openTab = async (menu: MenuItem) => {
-  if (tabs.value.some((tab) => tab.menuId === menu.menuId)) return
-  tabs.value.push(menu)
-  await nextTick()
-  selectedTab.value = tabs.value.length - 1
-}
-
-provide('openTab', openTab)
-
-// 탭 변경 이벤트
-const changeTab = (index: number) => {
-  selectedTab.value = index
-}
-
-const menus = ref<MenuItem[]>([
-  { menuId: '3', menuName: '시스템 관리', menuLevel: 1 },
-  {
-    menuId: '9',
-    menuName: '메뉴 관리',
-    menuLevel: 2,
-    parentId: '3',
-  },
-  {
-    menuId: '11',
-    menuName: '메뉴 등록',
-    menuLevel: 3,
-    parentId: '9',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/system/menu/form.vue'),
-    ),
-  },
-  {
-    menuId: '12',
-    menuName: '메뉴 목록',
-    menuLevel: 3,
-    parentId: '9',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/system/menu/index.vue'),
-    ),
-  },
-  {
-    menuId: '10',
-    menuName: '화면 관리',
-    menuLevel: 2,
-    parentId: '3',
-  },
-  { menuId: '1', menuName: '상품 관리', menuLevel: 1 },
-  {
-    menuId: '4',
-    menuName: '상품 목록',
-    menuLevel: 2,
-    parentId: '1',
-  },
-  {
-    menuId: '6',
-    menuName: '상품 상세 목록',
-    menuLevel: 3,
-    parentId: '4',
-  },
-  {
-    menuId: '5',
-    menuName: '상품 등록',
-    menuLevel: 2,
-    parentId: '1',
-    route: defineAsyncComponent(() => import('~/pages/admin/store/form.vue')),
-  },
-  {
-    menuId: '13',
-    menuName: '브랜드 관리',
-    menuLevel: 2,
-    parentId: '1',
-  },
-  {
-    menuId: '14',
-    menuName: '브랜드 목록',
-    menuLevel: 3,
-    parentId: '13',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/store/brand/index.vue'),
-    ),
-  },
-  {
-    menuId: '15',
-    menuName: '브랜드 등록',
-    menuLevel: 3,
-    parentId: '13',
-    route: defineAsyncComponent(
-      () => import('~/pages/admin/store/brand/form.vue'),
-    ),
-  },
-  { menuId: '2', menuName: '회원 관리', menuLevel: 1 },
-  {
-    menuId: '7',
-    menuName: '회원 목록',
-    menuLevel: 2,
-    parentId: '2',
-  },
-  {
-    menuId: '8',
-    menuName: '회원 등급',
-    menuLevel: 2,
-    parentId: '2',
-  },
-])
-</script>
 
 <style scoped>
 /* 필요시 커스텀 스타일 추가 */
