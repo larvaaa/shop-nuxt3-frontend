@@ -45,19 +45,18 @@ pipeline {
                     npm install -g pm2 || true
                     
                     # shop-frontend라는 프로세스가 돌고 있는지 확인
-                    # 모든 pm2 명령어 앞에 'sudo -u ubuntu'를 붙여서, ubuntu 계정의 PM2를 조종합니다.
-                    if sudo -u ubuntu pm2 describe shop-frontend > /dev/null 2>&1; then
+                    if pm2 describe shop-frontend > /dev/null 2>&1; then
                         echo "기존 프로세스 무중단 재시작 (Reload)"
-                        sudo -u ubuntu pm2 reload shop-frontend
+                        pm2 reload shop-frontend
                     else
                         echo "새 프로세스 실행 (Start)"
                         # 포트 3000번으로 pm2 백그라운드 실행
                         # pm2 시작 시 경로(PWD)가 중요하므로, 현재 젠킨스 작업 폴더에서 ubuntu 권한으로 실행하게 만듭니다.
-                        sudo -u ubuntu PORT=3000 pm2 start app/.output/server/index.mjs --name "shop-frontend"
+                        PORT=3000 pm2 start app/.output/server/index.mjs --name "shop-frontend"
                     fi
                     
                     # 서버 재부팅을 대비해 현재 PM2 상태 저장
-                    sudo -u ubuntu pm2 save
+                    pm2 save
                 '''
             }
         }
